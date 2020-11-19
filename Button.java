@@ -14,7 +14,14 @@ public class Button extends Drawer {
             if (beganIn == false) {
                 beganIn = checker.autoIsIn(x, y, this);
             }
-            return beganIn;
+            if (beganIn && Main.mouseOccupied.isClear()) {
+                Main.mouseOccupied = this;
+            }
+            if (Main.mouseOccupied == this) {
+                return beganIn;
+            } else {
+                return false;
+            }
         } else {
             beganIn = false;
             return false;
@@ -23,5 +30,9 @@ public class Button extends Drawer {
 
     public boolean isPressed(Point p) {
         return isPressed(p.getX(), p.getY());
+    }
+
+    public boolean isClear() {
+        return getX() == 0 && getY() == 0 && getW() == 0 && getH() == 0;
     }
 }

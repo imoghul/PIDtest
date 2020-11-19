@@ -25,6 +25,7 @@ class MouseListen implements MouseListener {
     @Override
     public void mouseReleased(MouseEvent arg0) {
         Main.mousePressed = false;
+        Main.mouseOccupied = new Button(0.0, 0.0, 0.0, 0.0);
     }
 
 }

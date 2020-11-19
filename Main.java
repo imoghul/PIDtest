@@ -25,6 +25,7 @@ public class Main extends JPanel implements ActionListener {
 	public static final int CURSORXOFFSET = 43;
 	public static final int CURSORYOFFSET = 46;
 	public static boolean mousePressed = false;
+	public static Button mouseOccupied = new Button(0.0, 0.0, 0.0, 0.0);;
 	public static final int defaultSpeed = 50;
 	// displayW=1389,displayH=855
 	// Objects
@@ -41,8 +42,9 @@ public class Main extends JPanel implements ActionListener {
 	public double offset = 50;
 
 	public void paintComponent(Graphics g) {
+		System.out.println(Main.mouseOccupied);
 		// update stuff
-		offset = Main.displayW / 10.0;
+		offset = Main.displayW / 5.0;
 		Main.square.setMinX(0);
 		Main.square.setMinY(0);
 		Main.square.setMaxX(Main.displayW - Main.square.getW() / 2.0);
@@ -65,12 +67,9 @@ public class Main extends JPanel implements ActionListener {
 		} else {
 			Main.reset.rect(g, new Color(150, 0, 0), true);
 		}
-		Main.pSlider.slide(g, Color.blue, true, MouseInfo.getPointerInfo().getLocation().x - CURSORXOFFSET,
-				MouseInfo.getPointerInfo().getLocation().y - CURSORYOFFSET);
-		Main.iSlider.slide(g, Color.blue, true, MouseInfo.getPointerInfo().getLocation().x - CURSORXOFFSET,
-				MouseInfo.getPointerInfo().getLocation().y - CURSORYOFFSET);
-		Main.dSlider.slide(g, Color.blue, true, MouseInfo.getPointerInfo().getLocation().x - CURSORXOFFSET,
-				MouseInfo.getPointerInfo().getLocation().y - CURSORYOFFSET);
+		Main.pSlider.slide(g, Color.blue, true, mouseX, mouseY);
+		Main.iSlider.slide(g, Color.blue, true, mouseX, mouseY);
+		Main.dSlider.slide(g, Color.blue, true, mouseX, mouseY);
 		g.setColor(Color.white);
 		// g.drawString("x: " + Main.square.getX(), 0, 20);
 		// g.drawString("y: " + Main.square.getY(), 0, 40);
@@ -105,8 +104,8 @@ public class Main extends JPanel implements ActionListener {
 		// System.out.println(
 		// MouseInfo.getPointerInfo().getLocation().x + ", " +
 		// MouseInfo.getPointerInfo().getLocation().y);
-		Main.displayW = panel.getWidth();
-		Main.displayH = panel.getHeight();
+		Main.displayW = Main.panel.getWidth();
+		Main.displayH = Main.panel.getHeight();
 		Main.mousePoint = MouseInfo.getPointerInfo().getLocation();
 		// System.out.println(Main.displayW + ", " + Main.displayH);
 		repaint();
