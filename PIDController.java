@@ -1,14 +1,9 @@
 public class PIDController {
     public double I;
-
     public double P;
-
-    public double D;
-
-    public double error;
-
     public double lastError = 0.0D;
-
+    public double D;
+    public double error;
     public double lastIntegral = 0.0D;
 
     private double dT = 0.1D;

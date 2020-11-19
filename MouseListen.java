@@ -12,10 +12,10 @@ class MouseListen implements MouseListener {
     }
 
     public void mousePressed(MouseEvent paramMouseEvent) {
-        Main.mousePressed = true;
+        /* 22 */ Main.mousePressed = true;
     }
 
     public void mouseReleased(MouseEvent paramMouseEvent) {
-        Main.mousePressed = false;
+        /* 27 */ Main.mousePressed = false;
     }
 }

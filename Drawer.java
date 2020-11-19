@@ -3,27 +3,17 @@ import java.awt.Graphics;
 
 public class Drawer {
     private double x;
-
     private double y;
-
     private double w;
-
     private double h;
-
     private String type;
-
     private double minX = Double.MIN_VALUE;
-
     private double minY = Double.MIN_VALUE;
-
     private double maxX = Double.MAX_VALUE;
-
     private double maxY = Double.MAX_VALUE;
 
     PIDController xcontroller;
-
     PIDController ycontroller;
-
     int delay = Main.timerSpeed;
 
     public Drawer(double paramDouble1, double paramDouble2, double paramDouble3, double paramDouble4,
@@ -32,7 +22,9 @@ public class Drawer {
         this.y = paramDouble2;
         this.w = paramDouble3;
         this.h = paramDouble4;
+
         this.xcontroller = new PIDController(paramDouble5, paramDouble6, paramDouble7, this.delay / 1000.0D);
+
         this.ycontroller = new PIDController(paramDouble5, paramDouble6, paramDouble7, this.delay / 1000.0D);
     }
 
@@ -197,6 +189,7 @@ public class Drawer {
     public void travelVector(int paramInt1, int paramInt2, int paramInt3) {
         System.out.println(
                 (int) (paramInt1 / gcd(paramInt1, paramInt2)) + ", " + (int) (paramInt2 / gcd(paramInt1, paramInt2)));
+
         incrementX((int) (paramInt1 / gcd(paramInt1, paramInt2)));
         incrementY((int) (paramInt2 / gcd(paramInt1, paramInt2)));
     }
@@ -245,8 +238,9 @@ public class Drawer {
     }
 
     private static int gcd(int paramInt1, int paramInt2) {
-        if (paramInt2 == 0)
+        if (paramInt2 == 0) {
             return paramInt1;
+        }
         return gcd(paramInt2, paramInt1 % paramInt2);
     }
 }

@@ -3,20 +3,13 @@ import java.awt.Graphics;
 
 public class Slider extends Button {
     boolean vertical;
-
     boolean horizontal;
-
     public double midBarX;
-
-    public double midBarY;
-
-    public double midBarW;
-
-    public double midBarH;
-
-    Drawer midBar;
-
     public double min = 0.0D, max = 1.0D;
+    public double midBarY;
+    public double midBarW;
+    public double midBarH;
+    Drawer midBar;
 
     public Slider(double paramDouble1, double paramDouble2, double paramDouble3, double paramDouble4,
             boolean paramBoolean1, boolean paramBoolean2, double paramDouble5, double paramDouble6) {
@@ -121,10 +114,12 @@ public class Slider extends Button {
     }
 
     public double getVal() {
-        if (this.horizontal)
+        if (this.horizontal) {
             return map(getX(), getMinX(), getMaxX(), this.min, this.max);
-        if (this.vertical)
+        }
+        if (this.vertical) {
             return map(getY(), getMinY(), getMaxY(), this.min, this.max);
+        }
         return 0.0D;
     }
 

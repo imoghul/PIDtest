@@ -8,8 +8,9 @@ public class Collision {
     public boolean ovalCollide(Drawer paramDrawer1, Drawer paramDrawer2) {
         for (byte b = 0; b < Main.displayW; b++) {
             for (byte b1 = 0; b1 < Main.displayH; b1++) {
-                if (pointInOval(b, b1, paramDrawer1) && pointInOval(b, b1, paramDrawer2))
+                if (pointInOval(b, b1, paramDrawer1) && pointInOval(b, b1, paramDrawer2)) {
                     return true;
+                }
             }
         }
         return false;
@@ -29,8 +30,9 @@ public class Collision {
     public boolean ovalRectCollide(Drawer paramDrawer1, Drawer paramDrawer2) {
         for (byte b = 0; b < Main.displayW; b++) {
             for (byte b1 = 0; b1 < Main.displayH; b1++) {
-                if (pointInOval(b, b1, paramDrawer1) && pointInRect(b, b1, paramDrawer2))
+                if (pointInOval(b, b1, paramDrawer1) && pointInRect(b, b1, paramDrawer2)) {
                     return true;
+                }
             }
         }
         return false;
@@ -39,20 +41,25 @@ public class Collision {
     public boolean autoIsIn(double paramDouble1, double paramDouble2, Drawer paramDrawer) {
         if (paramDrawer.getType().equals("rect"))
             return pointInRect(paramDouble1, paramDouble2, paramDrawer);
-        if (paramDrawer.getType().equals("oval"))
+        if (paramDrawer.getType().equals("oval")) {
             return pointInOval(paramDouble1, paramDouble2, paramDrawer);
+        }
         return false;
     }
 
     public boolean autoCollide(Drawer paramDrawer1, Drawer paramDrawer2) {
-        if (paramDrawer1.getType().equals("rect") && paramDrawer2.getType().equals("rect"))
+        if (paramDrawer1.getType().equals("rect") && paramDrawer2.getType().equals("rect")) {
             return rectCollide(paramDrawer1, paramDrawer2);
-        if (paramDrawer1.getType().equals("oval") && paramDrawer2.getType().equals("rect"))
+        }
+        if (paramDrawer1.getType().equals("oval") && paramDrawer2.getType().equals("rect")) {
             return ovalRectCollide(paramDrawer1, paramDrawer2);
-        if (paramDrawer1.getType().equals("rect") && paramDrawer2.getType().equals("oval"))
+        }
+        if (paramDrawer1.getType().equals("rect") && paramDrawer2.getType().equals("oval")) {
             return ovalRectCollide(paramDrawer2, paramDrawer1);
-        if (paramDrawer1.getType().equals("oval") && paramDrawer2.getType().equals("oval"))
+        }
+        if (paramDrawer1.getType().equals("oval") && paramDrawer2.getType().equals("oval")) {
             return ovalCollide(paramDrawer1, paramDrawer2);
+        }
         return false;
     }
 }
