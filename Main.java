@@ -36,7 +36,7 @@ public class Main extends JPanel implements ActionListener {
 	public static Slider pSlider = new Slider(100.0, 25.0, 25.0, 25.0, false, true, 200.0, 300.0, .000001, 1.9, Main.P);
 	public static Slider iSlider = new Slider(100.0, 50.0, 25.0, 25.0, false, true, 200.0, 300.0, -1, 100, Main.I);
 	public static Slider dSlider = new Slider(100.0, 75.0, 25.0, 25.0, false, true, 200.0, 300.0, -.001, .001, Main.D);
-	public static Button reset = new Button(0, 0, 50, 50);
+	public static Button reset = new Button(0.0, 0.0, 50.0, 50.0);
 
 	public double offset = 50;
 
@@ -60,7 +60,11 @@ public class Main extends JPanel implements ActionListener {
 		Main.dSlider.setVal(Main.D);
 		// draw objects and strings
 		Main.square.oval(g, Color.green, true);
-		Main.reset.rect(g, Color.red, true);
+		if (!Main.reset.isPressed(mouseX, mouseY)) {
+			Main.reset.rect(g, Color.red, true);
+		} else {
+			Main.reset.rect(g, new Color(150, 0, 0), true);
+		}
 		Main.pSlider.slide(g, Color.blue, true, MouseInfo.getPointerInfo().getLocation().x - CURSORXOFFSET,
 				MouseInfo.getPointerInfo().getLocation().y - CURSORYOFFSET);
 		Main.iSlider.slide(g, Color.blue, true, MouseInfo.getPointerInfo().getLocation().x - CURSORXOFFSET,
