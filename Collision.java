@@ -1,14 +1,16 @@
 public class Collision {
-    public boolean rectCollide(Drawer paramDrawer1, Drawer paramDrawer2) {
-        double d1 = paramDrawer1.getX(), d2 = paramDrawer1.getY(), d3 = paramDrawer1.getW(), d4 = paramDrawer1.getH();
-        double d5 = paramDrawer2.getX(), d6 = paramDrawer2.getY(), d7 = paramDrawer2.getW(), d8 = paramDrawer2.getH();
-        return (d5 + d7 >= d1 && d5 <= d1 + d3 && d6 <= d2 + d4 && d6 + d8 >= d2);
+    public boolean rectCollide(Drawer one, Drawer two) {
+        double x = one.getX(), y = one.getY(), w = one.getW(), h = one.getH();
+        double x2 = two.getX(), y2 = two.getY(), w2 = two.getW(), h2 = two.getH();
+        return (((x2 + w2 >= x) && (x2 <= x + w)) && ((y2 <= y + h) && (y2 + h2 >= y)));
     }
 
-    public boolean ovalCollide(Drawer paramDrawer1, Drawer paramDrawer2) {
-        for (byte b = 0; b < Main.displayW; b++) {
-            for (byte b1 = 0; b1 < Main.displayH; b1++) {
-                if (pointInOval(b, b1, paramDrawer1) && pointInOval(b, b1, paramDrawer2)) {
+    public boolean ovalCollide(Drawer one, Drawer two) {
+        // check if (xcoor,ycoor) is in elipse with (x,y)center and width,w and height,h
+        // (Math.pow(((xcoor-x)/(w/2)),2) + Math.pow((ycoor-y)/(h/2),2))<=1
+        for (int xcoor = 0; xcoor < Main.displayW; xcoor++) {
+            for (int ycoor = 0; ycoor < Main.displayH; ycoor++) {
+                if (pointInOval(xcoor, ycoor, one) && pointInOval(xcoor, ycoor, two)) {
                     return true;
                 }
             }
@@ -16,21 +18,22 @@ public class Collision {
         return false;
     }
 
-    public boolean pointInOval(double paramDouble1, double paramDouble2, Drawer paramDrawer) {
-        double d1 = paramDrawer.getX(), d2 = paramDrawer.getY(), d3 = paramDrawer.getW(), d4 = paramDrawer.getH();
-        return (Math.pow((paramDouble1 - d1) / d3 / 2.0D, 2.0D)
-                + Math.pow((paramDouble2 - d2) / d4 / 2.0D, 2.0D) <= 1.0D);
+    public boolean pointInOval(double xcoor, double ycoor, Drawer oval) {
+        double x = oval.getX(), y = oval.getY(), w = oval.getW(), h = oval.getH();
+        return (Math.pow(((xcoor - x) / (w / 2)), 2) + Math.pow((ycoor - y) / (h / 2), 2)) <= 1;// (Math.pow(((xcoor-oval.getX())/(ovall.getW()/2)),2)
+                                                                                                // +
+                                                                                                // Math.pow((ycoor-oval.getY())/(oval.getH()/2),2))<=1;
     }
 
-    public boolean pointInRect(double paramDouble1, double paramDouble2, Drawer paramDrawer) {
-        double d1 = paramDrawer.getX(), d2 = paramDrawer.getY(), d3 = paramDrawer.getW(), d4 = paramDrawer.getH();
-        return (paramDouble1 >= d1 && paramDouble1 <= d1 + d3 && paramDouble2 >= d2 && paramDouble2 <= d2 + d4);
+    public boolean pointInRect(double xcoor, double ycoor, Drawer rect) {
+        double x2 = rect.getX(), y2 = rect.getY(), w2 = rect.getW(), h2 = rect.getH();
+        return ((xcoor >= x2) && (xcoor <= (x2 + w2)) && (ycoor >= y2) && (ycoor <= (y2 + h2)));
     }
 
-    public boolean ovalRectCollide(Drawer paramDrawer1, Drawer paramDrawer2) {
-        for (byte b = 0; b < Main.displayW; b++) {
-            for (byte b1 = 0; b1 < Main.displayH; b1++) {
-                if (pointInOval(b, b1, paramDrawer1) && pointInRect(b, b1, paramDrawer2)) {
+    public boolean ovalRectCollide(Drawer oval, Drawer rect) {
+        for (int xcoor = 0; xcoor < Main.displayW; xcoor++) {
+            for (int ycoor = 0; ycoor < Main.displayH; ycoor++) {
+                if (pointInOval(xcoor, ycoor, oval) && pointInRect(xcoor, ycoor, rect)) {
                     return true;
                 }
             }
@@ -38,27 +41,28 @@ public class Collision {
         return false;
     }
 
-    public boolean autoIsIn(double paramDouble1, double paramDouble2, Drawer paramDrawer) {
-        if (paramDrawer.getType().equals("rect"))
-            return pointInRect(paramDouble1, paramDouble2, paramDrawer);
-        if (paramDrawer.getType().equals("oval")) {
-            return pointInOval(paramDouble1, paramDouble2, paramDrawer);
+    public boolean autoIsIn(double x, double y, Drawer one) {
+        if (one.getType().equals("rect")) {
+            return pointInRect(x, y, one);
+        } else if (one.getType().equals("oval")) {
+            return pointInOval(x, y, one);
         }
         return false;
     }
 
-    public boolean autoCollide(Drawer paramDrawer1, Drawer paramDrawer2) {
-        if (paramDrawer1.getType().equals("rect") && paramDrawer2.getType().equals("rect")) {
-            return rectCollide(paramDrawer1, paramDrawer2);
-        }
-        if (paramDrawer1.getType().equals("oval") && paramDrawer2.getType().equals("rect")) {
-            return ovalRectCollide(paramDrawer1, paramDrawer2);
-        }
-        if (paramDrawer1.getType().equals("rect") && paramDrawer2.getType().equals("oval")) {
-            return ovalRectCollide(paramDrawer2, paramDrawer1);
-        }
-        if (paramDrawer1.getType().equals("oval") && paramDrawer2.getType().equals("oval")) {
-            return ovalCollide(paramDrawer1, paramDrawer2);
+    public boolean autoCollide(Drawer one, Drawer two) {
+        if (one.getType().equals("rect") && two.getType().equals("rect")) {
+            // System.out.println("rect and rect");
+            return rectCollide(one, two);
+        } else if (one.getType().equals("oval") && two.getType().equals("rect")) {
+            // System.out.println("oval and rect");
+            return ovalRectCollide(one, two);
+        } else if (one.getType().equals("rect") && two.getType().equals("oval")) {
+            // System.out.println("rect and oval");
+            return ovalRectCollide(two, one);
+        } else if (one.getType().equals("oval") && two.getType().equals("oval")) {
+            // System.out.println("oval and oval");
+            return ovalCollide(one, two);
         }
         return false;
     }

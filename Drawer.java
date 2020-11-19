@@ -1,11 +1,14 @@
-import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.Random;
+import javax.swing.*;
+import java.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class Drawer {
-    private double x;
-    private double y;
-    private double w;
-    private double h;
+
+    private double x, y, w, h;
     private String type;
     private double minX = Double.MIN_VALUE;
     private double minY = Double.MIN_VALUE;
@@ -16,231 +19,236 @@ public class Drawer {
     PIDController ycontroller;
     int delay = Main.timerSpeed;
 
-    public Drawer(double paramDouble1, double paramDouble2, double paramDouble3, double paramDouble4,
-            double paramDouble5, double paramDouble6, double paramDouble7) {
-        this.x = paramDouble1;
-        this.y = paramDouble2;
-        this.w = paramDouble3;
-        this.h = paramDouble4;
-
-        this.xcontroller = new PIDController(paramDouble5, paramDouble6, paramDouble7, this.delay / 1000.0D);
-
-        this.ycontroller = new PIDController(paramDouble5, paramDouble6, paramDouble7, this.delay / 1000.0D);
+    public Drawer(double newX, double newY, double newW, double newH, double P, double I, double D) {
+        x = newX;
+        y = newY;
+        w = newW;
+        h = newH;
+        xcontroller = new PIDController(P, I, D, (double) delay / 1000.0);
+        ycontroller = new PIDController(P, I, D, (double) delay / 1000.0);
     }
 
-    public Drawer(double paramDouble1, double paramDouble2, double paramDouble3, double paramDouble4) {
-        this.x = paramDouble1;
-        this.y = paramDouble2;
-        this.w = paramDouble3;
-        this.h = paramDouble4;
+    public Drawer(double newX, double newY, double newW, double newH) {
+        x = newX;
+        y = newY;
+        w = newW;
+        h = newH;
     }
 
-    public Drawer(double paramDouble1, double paramDouble2, double paramDouble3, double paramDouble4,
-            double paramDouble5, double paramDouble6, double paramDouble7, String paramString) {
-        this(paramDouble1, paramDouble2, paramDouble3, paramDouble4, paramDouble5, paramDouble6, paramDouble7);
-        this.type = paramString;
+    public Drawer(double newX, double newY, double newW, double newH, double P, double I, double D, String t) {
+        this(newX, newY, newW, newH, P, I, D);
+        type = t;
     }
 
     public double getX() {
-        return this.x;
+        return x;
     }
 
     public double getY() {
-        return this.y;
+        return y;
     }
 
     public double getW() {
-        return this.w;
+        return w;
     }
 
     public double getH() {
-        return this.h;
+        return h;
     }
 
     public String getType() {
-        return this.type;
+        return type;
     }
 
     public double getMinX() {
-        return this.minX;
+        return minX;
     }
 
     public double getMaxX() {
-        return this.maxX;
+        return maxX;
     }
 
     public double getMinY() {
-        return this.minY;
+        return minY;
     }
 
     public double getMaxY() {
-        return this.maxY;
+        return maxY;
     }
 
-    public void setMaxX(double paramDouble) {
-        this.maxX = paramDouble;
+    public void setMaxX(double newx) {
+        maxX = newx;
     }
 
-    public void setMinX(double paramDouble) {
-        this.minX = paramDouble;
+    public void setMinX(double newx) {
+        minX = newx;
     }
 
-    public void setMaxY(double paramDouble) {
-        this.maxY = paramDouble;
+    public void setMaxY(double newy) {
+        maxY = newy;
     }
 
-    public void setMinY(double paramDouble) {
-        this.minY = paramDouble;
+    public void setMinY(double newy) {
+        minY = newy;
     }
 
-    public void setX(double paramDouble) {
-        this.x = paramDouble;
+    public void setX(double newX) {
+
+        x = newX; // - getW(); // -getW/2 if top corner is needed
+
     }
 
-    public void setY(double paramDouble) {
-        this.y = paramDouble;
+    public void setY(double newY) {
+
+        y = newY; // - getH(); // -getH/2 if top corner is needed
+
     }
 
-    public void setXSafe(double paramDouble) {
-        if (paramDouble >= this.minX && paramDouble <= this.maxX) {
-            this.x = paramDouble;
-        } else if (paramDouble <= this.minX) {
-            this.x = this.minX;
-        } else if (paramDouble > this.maxX) {
-            this.x = this.maxX;
+    public void setXSafe(double newX) {
+        if (newX >= minX && newX <= maxX) {
+            x = newX; // - getW(); // -getW/2 if top corner is needed
+        } else if (newX <= minX) {
+            x = minX;
+        } else if (newX > maxX) {
+            x = maxX;
         }
     }
 
-    public void setYSafe(double paramDouble) {
-        if (paramDouble >= this.minY && paramDouble <= this.maxY) {
-            this.y = paramDouble;
-        } else if (paramDouble <= this.minY) {
-            this.y = this.minY;
-        } else if (paramDouble > this.maxY) {
-            this.y = this.maxY;
+    public void setYSafe(double newY) {
+        if (newY >= minY && newY <= maxY) {
+            y = newY; // - getH(); // -getH/2 if top corner is needed
+        } else if (newY <= minY) {
+            y = minY;
+        } else if (newY > maxY) {
+            y = maxY;
         }
     }
 
-    public void updateControllers(double paramDouble1, double paramDouble2, double paramDouble3) {
-        this.xcontroller.setP(paramDouble1);
-        this.xcontroller.setI(paramDouble2);
-        this.xcontroller.setD(paramDouble3);
-        this.ycontroller.setP(paramDouble1);
-        this.ycontroller.setI(paramDouble2);
-        this.ycontroller.setD(paramDouble3);
+    public void updateControllers(double p, double i, double d) {
+        xcontroller.setP(p);
+        xcontroller.setI(i);
+        xcontroller.setD(d);
+        ycontroller.setP(p);
+        ycontroller.setI(i);
+        ycontroller.setD(d);
     }
 
-    public boolean setXPID(double paramDouble) {
-        double d = getX();
-        if (Math.abs(d - paramDouble) > 0.01D) {
-            d = this.xcontroller.PIDout(d, paramDouble);
-            setX(d);
+    public boolean setXPID(double desired) {
+        double actual = getX();
+        if (Math.abs(actual - desired) > 0.01) {
+            actual = xcontroller.PIDout(actual, desired);
+            setX(actual);
             try {
-                Thread.sleep(this.delay);
-            } catch (InterruptedException interruptedException) {
+                Thread.sleep(delay);
+            } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
             }
             return false;
+        } else {
+            xcontroller.reset();
+            return true;
         }
-        this.xcontroller.reset();
-        return true;
     }
 
-    public boolean setYPID(double paramDouble) {
-        double d = getY();
-        if (Math.abs(d - paramDouble) > 0.01D) {
-            d = this.ycontroller.PIDout(d, paramDouble);
-            setY(d);
+    public boolean setYPID(double desired) {
+        double actual = getY();
+        if (Math.abs(actual - desired) > 0.01) {
+            actual = ycontroller.PIDout(actual, desired);
+            setY(actual);
             try {
-                Thread.sleep(this.delay);
-            } catch (InterruptedException interruptedException) {
+                Thread.sleep(delay);
+            } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
             }
             return false;
-        }
-        this.ycontroller.reset();
-        return true;
-    }
-
-    public void setW(double paramDouble) {
-        this.w = paramDouble;
-    }
-
-    public void setH(double paramDouble) {
-        this.h = paramDouble;
-    }
-
-    public void incrementX(double paramDouble) {
-        setX(getX() + paramDouble);
-    }
-
-    public void incrementY(double paramDouble) {
-        setY(getY() + paramDouble);
-    }
-
-    public void incrementW(double paramDouble) {
-        this.w += paramDouble;
-    }
-
-    public void incrementH(double paramDouble) {
-        this.h += paramDouble;
-    }
-
-    public void travelVector(int paramInt1, int paramInt2, int paramInt3) {
-        System.out.println(
-                (int) (paramInt1 / gcd(paramInt1, paramInt2)) + ", " + (int) (paramInt2 / gcd(paramInt1, paramInt2)));
-
-        incrementX((int) (paramInt1 / gcd(paramInt1, paramInt2)));
-        incrementY((int) (paramInt2 / gcd(paramInt1, paramInt2)));
-    }
-
-    public void rect(Graphics paramGraphics, Color paramColor, boolean paramBoolean) {
-        this.type = "rect";
-        paramGraphics.setColor(paramColor);
-        if (paramBoolean) {
-            paramGraphics.fillRect((int) getX(), (int) getY(), (int) getW(), (int) getH());
         } else {
-            paramGraphics.drawRect((int) getX(), (int) getY(), (int) getW(), (int) getH());
+            ycontroller.reset();
+            return true;
         }
     }
 
-    public void clear(Graphics paramGraphics) {
-        paramGraphics.setColor(Color.black);
+    public void setW(double newW) {
+        w = newW;
     }
 
-    public void oval(Graphics paramGraphics, Color paramColor, boolean paramBoolean) {
-        this.type = "oval";
-        paramGraphics.setColor(paramColor);
-        if (paramBoolean) {
-            paramGraphics.fillOval((int) getX() - (int) (getW() / 2.0D), (int) getY() - (int) (getH() / 2.0D),
-                    (int) getW(), (int) getH());
+    public void setH(double newH) {
+        h = newH;
+    }
+
+    public void incrementX(double i) {
+        setX(getX() + i);
+    }
+
+    public void incrementY(double i) {
+        setY(getY() + i);
+    }
+
+    public void incrementW(double i) {
+        w += i;
+    }
+
+    public void incrementH(double i) {
+        h += i;
+    }
+
+    public void travelVector(int x, int y, int m) {
+        System.out.println((int) ((double) x / (double) gcd(x, y)) + ", " + (int) ((double) y / (double) gcd(x, y)));
+
+        incrementX((int) ((double) x / (double) gcd(x, y)));
+        incrementY((int) ((double) y / (double) gcd(x, y)));
+    }
+
+    public void rect(Graphics g, Color c, boolean filled) {
+        type = "rect";
+        g.setColor(c);
+        if (filled) {
+            g.fillRect((int) getX(), (int) getY(), (int) getW(), (int) getH());
         } else {
-            paramGraphics.drawOval((int) getX() - (int) (getW() / 2.0D), (int) getY() - (int) (getH() / 2.0D),
-                    (int) getW(), (int) getH());
+            g.drawRect((int) getX(), (int) getY(), (int) getW(), (int) getH());// g.drawRect(getX(), getY(), getW(),
+                                                                               // getH());
         }
     }
 
-    public void drawAuto(Graphics paramGraphics, Color paramColor, boolean paramBoolean) {
-        if (this.type.equals("rect")) {
-            rect(paramGraphics, paramColor, paramBoolean);
-        } else if (this.type.equals("oval")) {
-            oval(paramGraphics, paramColor, paramBoolean);
+    public void clear(Graphics g) {
+        g.setColor(Color.black);
+        // g.drawRect(1, 1, 1, 1);
+    }
+
+    public void oval(Graphics g, Color c, boolean filled) {
+        type = "oval";
+        g.setColor(c);
+        if (filled) {
+            g.fillOval((int) getX() - (int) (getW() / 2.0), (int) getY() - (int) (getH() / 2.0), (int) getW(),
+                    (int) getH());
+        } else {
+            g.drawOval((int) getX() - (int) (getW() / 2.0), (int) getY() - (int) (getH() / 2.0), (int) getW(),
+                    (int) getH());
         }
     }
 
-    public void draw(Graphics paramGraphics, Color paramColor, boolean paramBoolean, String paramString) {
-        this.type = paramString;
-        if (this.type.equals("rect")) {
-            rect(paramGraphics, paramColor, paramBoolean);
-        } else if (this.type.equals("oval")) {
-            oval(paramGraphics, paramColor, paramBoolean);
+    public void drawAuto(Graphics g, Color c, boolean filled) {
+        if (type.equals("rect")) {
+            rect(g, c, filled);
+        } else if (type.equals("oval")) {
+            oval(g, c, filled);
         }
     }
 
-    private static int gcd(int paramInt1, int paramInt2) {
-        if (paramInt2 == 0) {
-            return paramInt1;
+    public void draw(Graphics g, Color c, boolean filled, String t) {
+        type = t;
+        if (type.equals("rect")) {
+            rect(g, c, filled);
+        } else if (type.equals("oval")) {
+            oval(g, c, filled);
         }
-        return gcd(paramInt2, paramInt1 % paramInt2);
     }
+
+    private static int gcd(int a, int b) {
+        if (b == 0) {
+            return a;
+        }
+        return gcd(b, a % b);
+
+    }
+
 }

@@ -1,26 +1,27 @@
-
-import java.awt.Point;
+import java.awt.*;
 
 public class Button extends Drawer {
     Collision checker = new Collision();
     boolean beganIn = false;
 
-    public Button(double paramDouble1, double paramDouble2, double paramDouble3, double paramDouble4) {
-        super(paramDouble1, paramDouble2, paramDouble3, paramDouble4);
+    public Button(double x, double y, double w, double h) {
+        super(x, y, w, h);
     }
 
-    public boolean isPressed(double paramDouble1, double paramDouble2) {
+    public boolean isPressed(double x, double y) {
+        // return Main.mousePressed && checker.autoIsIn(x, y, this);
         if (Main.mousePressed) {
-            if (!this.beganIn) {
-                this.beganIn = this.checker.autoIsIn(paramDouble1, paramDouble2, this);
+            if (beganIn == false) {
+                beganIn = checker.autoIsIn(x, y, this);
             }
-            return this.beganIn;
+            return beganIn;
+        } else {
+            beganIn = false;
+            return false;
         }
-        this.beganIn = false;
-        return false;
     }
 
-    public boolean isPressed(Point paramPoint) {
-        return isPressed(paramPoint.getX(), paramPoint.getY());
+    public boolean isPressed(Point p) {
+        return isPressed(p.getX(), p.getY());
     }
 }

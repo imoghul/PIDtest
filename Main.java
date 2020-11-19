@@ -1,125 +1,125 @@
-
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.Graphics;
-import java.awt.MouseInfo;
-import java.awt.Point;
-import java.awt.TextField;
-import java.awt.Toolkit;
-import java.awt.event.ActionListener;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JSlider;
-import javax.swing.JTextField;
-import javax.swing.Timer;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.Random;
+import javax.swing.*;
+import javax.swing.event.*;
+import java.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.concurrent.TimeUnit;
+import java.util.Scanner;
 
+//extends JPanel implements ActionListener
 public class Main extends JPanel implements ActionListener {
+	// Graphical constants
+	static final long serialVersionUID = 536871008;
+	public static JFrame window = new JFrame("PID Test");
+	public static TextField textField = new TextField();
+	public static Main panel = new Main();
+	public static Container c = window.getContentPane();
+	public static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+	public static Timer clock = new Timer(Main.timerSpeed, panel);
+	public static Point mousePoint = MouseInfo.getPointerInfo().getLocation();
+	// Fields
+	public static int displayW = 500, displayH = 500, timerSpeed = 10, speed = 1; // full screen:
+	public static final int CURSORXOFFSET = 43;
+	public static final int CURSORYOFFSET = 46;
+	public static boolean mousePressed = false;
+	public static final int defaultSpeed = 50;
+	// displayW=1389,displayH=855
+	// Objects
 
-    public static JFrame window = new JFrame("PID Test");
-    static final long serialVersionUID = 536871008L;
-    public static TextField textField = new TextField();
-    public static Main panel = new Main();
-    public static Container c = window.getContentPane(); // public static Dimension screenSize =
-                                                         // Toolkit.getDefaultToolkit().getScreenSize();
+	static double P = 1.0;// .1;// 1.1;//.3;
+	static double I = 0;// 3;// 30;//30;
+	static double D = 0;// 0.00001;// -.001;//.001;
+	public static Drawer square = new Drawer(10.0, 10.0, 50.0, 50.0, P, I, D);
+	public static Slider pSlider = new Slider(100.0, 25.0, 25.0, 25.0, false, true, 200.0, 300.0, .000001, 1.9, 1.0);
+	public static Slider iSlider = new Slider(100.0, 50.0, 25.0, 25.0, false, true, 200.0, 300.0, 0, 100);
+	public static Slider dSlider = new Slider(100.0, 75.0, 25.0, 25.0, false, true, 200.0, 300.0, .000000001, .001);
+	public static Button reset = new Button(0, 0, 50, 50);
 
-    public static Timer clock = new Timer(Main.timerSpeed, panel);
-    public static Point mousePoint = MouseInfo.getPointerInfo().getLocation();
+	public double offset = 50;
 
-    public static int displayW = 500;
-    public static int displayH = 500;
-    public static int timerSpeed = 10;
-    public static int speed = 1;
+	public void paintComponent(Graphics g) {
+		// update stuff
+		offset = Main.displayW / 10.0;
+		Main.square.setMinX(0);
+		Main.square.setMinY(0);
+		Main.square.setMaxX(Main.displayW - Main.square.getW() / 2.0);
+		Main.square.setMaxY(Main.displayH - Main.square.getH() / 2.0);
+		Main.pSlider.setMinX((Main.displayW / 2) - offset);
+		Main.pSlider.setMaxX((Main.displayW / 2) + offset);
+		Main.iSlider.setMinX((Main.displayW / 2) - offset);
+		Main.iSlider.setMaxX((Main.displayW / 2) + offset);
+		Main.dSlider.setMinX((Main.displayW / 2) - offset);
+		Main.dSlider.setMaxX((Main.displayW / 2) + offset);
+		double mouseX = MouseInfo.getPointerInfo().getLocation().x - CURSORXOFFSET;
+		double mouseY = MouseInfo.getPointerInfo().getLocation().y - CURSORYOFFSET;
+		Main.pSlider.setVal(Main.P);
+		Main.iSlider.setVal(Main.I);
+		Main.dSlider.setVal(Main.D);
+		// draw objects and strings
+		Main.square.oval(g, Color.green, true);
+		Main.reset.rect(g, Color.red, true);
+		Main.pSlider.slide(g, Color.blue, true, MouseInfo.getPointerInfo().getLocation().x - CURSORXOFFSET,
+				MouseInfo.getPointerInfo().getLocation().y - CURSORYOFFSET);
+		Main.iSlider.slide(g, Color.blue, true, MouseInfo.getPointerInfo().getLocation().x - CURSORXOFFSET,
+				MouseInfo.getPointerInfo().getLocation().y - CURSORYOFFSET);
+		Main.dSlider.slide(g, Color.blue, true, MouseInfo.getPointerInfo().getLocation().x - CURSORXOFFSET,
+				MouseInfo.getPointerInfo().getLocation().y - CURSORYOFFSET);
+		g.setColor(Color.white);
+		// g.drawString("x: " + Main.square.getX(), 0, 20);
+		// g.drawString("y: " + Main.square.getY(), 0, 40);
+		g.drawString("P: " + Main.P, (Main.displayW / 2) + (int) offset + 5, 30);
+		g.drawString("I: " + Main.I, (Main.displayW / 2) + (int) offset + 5, 55);
+		g.drawString("D: " + Main.D, (Main.displayW / 2) + (int) offset + 5, 80);
+		g.drawString("reset", 5, 30);
+		// pid loop
+		if (Main.reset.isPressed(mouseX, mouseY)) {
+			Main.square.setX(mouseX);
+			Main.square.setY(mouseY);
+			Main.pSlider.setVal(1.0);
+			Main.iSlider.setVal(Main.iSlider.min);
+			Main.dSlider.setVal(Main.dSlider.min);
+		}
+		Main.P = pSlider.getVal();
+		Main.I = iSlider.getVal();
+		Main.D = dSlider.getVal();
+		Main.square.updateControllers(Main.P, Main.I, Main.D);
+		double desiredX = MouseInfo.getPointerInfo().getLocation().x - CURSORXOFFSET;// 120.0;
+		double desiredY = MouseInfo.getPointerInfo().getLocation().y - CURSORYOFFSET;// 120.0;
+		Main.square.setXPID(desiredX);
+		Main.square.setYPID(desiredY);
+		/*
+		 * try { Thread.sleep(100); } catch (InterruptedException ie) {
+		 * Thread.currentThread().interrupt(); }
+		 */
+	}
 
-    public static final int CURSORXOFFSET = 43;
+	public void actionPerformed(ActionEvent e) {
+		// double desiredX, desiredY;
+		// System.out.println(
+		// MouseInfo.getPointerInfo().getLocation().x + ", " +
+		// MouseInfo.getPointerInfo().getLocation().y);
+		Main.displayW = panel.getWidth();
+		Main.displayH = panel.getHeight();
+		Main.mousePoint = MouseInfo.getPointerInfo().getLocation();
+		// System.out.println(Main.displayW + ", " + Main.displayH);
+		repaint();
+	}
 
-    public static final int CURSORYOFFSET = 46;
-
-    public static boolean mousePressed = false;
-    public static final int defaultSpeed = 50;
-    static double P = 1.0D;
-    static double I = 0.0D;
-    static double D = 0.0D;
-    public static Drawer square = new Drawer(10.0D, 10.0D, 50.0D, 50.0D, P, I, D);
-    public static Slider pSlider = new Slider(100.0D, 25.0D, 25.0D, 25.0D, false, true, 200.0D, 300.0D, 1.0E-6D, 1.9D,
-            1.0D);
-    public static Slider iSlider = new Slider(100.0D, 50.0D, 25.0D, 25.0D, false, true, 200.0D, 300.0D, 0.0D, 100.0D);
-    public static Slider dSlider = new Slider(100.0D, 75.0D, 25.0D, 25.0D, false, true, 200.0D, 300.0D, 1.0E-9D,
-            0.001D);
-    public static Button reset = new Button(0.0D, 0.0D, 50.0D, 50.0D);
-
-    public double offset = 50.0D;
-
-    public void paintComponent(Graphics paramGraphics) {
-        this.offset = displayW / 10.0D;
-        square.setMinX(0.0D);
-        square.setMinY(0.0D);
-        square.setMaxX(displayW - square.getW() / 2.0D);
-        square.setMaxY(displayH - square.getH() / 2.0D);
-        pSlider.setMinX((displayW / 2) - this.offset);
-        pSlider.setMaxX((displayW / 2) + this.offset);
-        iSlider.setMinX((displayW / 2) - this.offset);
-        iSlider.setMaxX((displayW / 2) + this.offset);
-        dSlider.setMinX((displayW / 2) - this.offset);
-        dSlider.setMaxX((displayW / 2) + this.offset);
-        double d1 = ((MouseInfo.getPointerInfo().getLocation()).x - 43);
-        double d2 = ((MouseInfo.getPointerInfo().getLocation()).y - 46);
-        pSlider.setVal(P);
-        iSlider.setVal(I);
-        dSlider.setVal(D);
-
-        square.oval(paramGraphics, Color.green, true);
-        reset.rect(paramGraphics, Color.red, true);
-        pSlider.slide(paramGraphics, Color.blue, true, ((MouseInfo.getPointerInfo().getLocation()).x - 43),
-                ((MouseInfo.getPointerInfo().getLocation()).y - 46));
-        iSlider.slide(paramGraphics, Color.blue, true, ((MouseInfo.getPointerInfo().getLocation()).x - 43),
-                ((MouseInfo.getPointerInfo().getLocation()).y - 46));
-        dSlider.slide(paramGraphics, Color.blue, true, ((MouseInfo.getPointerInfo().getLocation()).x - 43),
-                ((MouseInfo.getPointerInfo().getLocation()).y - 46));
-        paramGraphics.setColor(Color.white);
-
-        paramGraphics.drawString("P: " + P, displayW / 2 + (int) this.offset + 5, 30);
-        paramGraphics.drawString("I: " + I, displayW / 2 + (int) this.offset + 5, 55);
-        paramGraphics.drawString("D: " + D, displayW / 2 + (int) this.offset + 5, 80);
-        paramGraphics.drawString("reset", 5, 30);
-
-        if (reset.isPressed(d1, d2)) {
-            square.setX(d1);
-            square.setY(d2);
-            pSlider.setVal(1.0D);
-            iSlider.setVal(iSlider.min);
-            dSlider.setVal(dSlider.min);
-        }
-        P = pSlider.getVal();
-        I = iSlider.getVal();
-        D = dSlider.getVal();
-        square.updateControllers(P, I, D);
-        double d3 = ((MouseInfo.getPointerInfo().getLocation()).x - 43);
-        double d4 = ((MouseInfo.getPointerInfo().getLocation()).y - 46);
-        square.setXPID(d3);
-        square.setYPID(d4);
-    }
-
-    public void actionPerformed(ActionEvent paramActionEvent) {
-        displayW = panel.getWidth();
-        displayH = panel.getHeight();
-        mousePoint = MouseInfo.getPointerInfo().getLocation();
-
-        repaint();
-    }
-
-    public static void main(String[] paramArrayOfString) throws Exception {
-        JTextField jTextField = new JTextField();
-        JSlider jSlider = new JSlider(0);
-        panel.setBackground(Color.black);
-        window.setDefaultCloseOperation(3);
-        window.add(jTextField);
-        panel.addMouseListener(new MouseListen());
-        window.setBounds(0, 0, displayW, displayH);
-        c.add(panel);
-        window.setDefaultCloseOperation(3);
-        window.setVisible(true);
-        window.setResizable(true);
-        clock.start();
-    }
+	public static void main(String[] argv) throws Exception {
+		JTextField textField = new JTextField();
+		JSlider PGain = new JSlider(JSlider.HORIZONTAL);
+		Main.panel.setBackground(Color.black);
+		Main.window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		Main.window.add(textField);
+		Main.panel.addMouseListener(new MouseListen());
+		Main.window.setBounds(0, 0, displayW, displayH);
+		Main.c.add(panel);
+		Main.window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		Main.window.setVisible(true);
+		Main.window.setResizable(true);
+		Main.clock.start();
+	}
 }
