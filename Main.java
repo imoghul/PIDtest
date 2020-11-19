@@ -30,12 +30,12 @@ public class Main extends JPanel implements ActionListener {
 	// Objects
 
 	static double P = 1.0;// .1;// 1.1;//.3;
-	static double I = 0;// 3;// 30;//30;
-	static double D = 0;// 0.00001;// -.001;//.001;
+	static double I = 0.0;// 3;// 30;//30;
+	static double D = 0.0;// 0.00001;// -.001;//.001;
 	public static Drawer square = new Drawer(10.0, 10.0, 50.0, 50.0, P, I, D);
-	public static Slider pSlider = new Slider(100.0, 25.0, 25.0, 25.0, false, true, 200.0, 300.0, .000001, 1.9, 1.0);
-	public static Slider iSlider = new Slider(100.0, 50.0, 25.0, 25.0, false, true, 200.0, 300.0, 0, 100);
-	public static Slider dSlider = new Slider(100.0, 75.0, 25.0, 25.0, false, true, 200.0, 300.0, .000000001, .001);
+	public static Slider pSlider = new Slider(100.0, 25.0, 25.0, 25.0, false, true, 200.0, 300.0, .000001, 1.9, Main.P);
+	public static Slider iSlider = new Slider(100.0, 50.0, 25.0, 25.0, false, true, 200.0, 300.0, -1, 100, Main.I);
+	public static Slider dSlider = new Slider(100.0, 75.0, 25.0, 25.0, false, true, 200.0, 300.0, -.001, .001, Main.D);
 	public static Button reset = new Button(0, 0, 50, 50);
 
 	public double offset = 50;
@@ -70,17 +70,17 @@ public class Main extends JPanel implements ActionListener {
 		g.setColor(Color.white);
 		// g.drawString("x: " + Main.square.getX(), 0, 20);
 		// g.drawString("y: " + Main.square.getY(), 0, 40);
-		g.drawString("P: " + Main.P, (Main.displayW / 2) + (int) offset + 5, 30);
-		g.drawString("I: " + Main.I, (Main.displayW / 2) + (int) offset + 5, 55);
-		g.drawString("D: " + Main.D, (Main.displayW / 2) + (int) offset + 5, 80);
+		g.drawString("P: " + String.format("%.5f", Main.P), (Main.displayW / 2) + (int) offset + 5, 30);
+		g.drawString("I: " + String.format("%.5f", Main.I), (Main.displayW / 2) + (int) offset + 5, 55);
+		g.drawString("D: " + String.format("%.5f", Main.D), (Main.displayW / 2) + (int) offset + 5, 80);
 		g.drawString("reset", 5, 30);
 		// pid loop
 		if (Main.reset.isPressed(mouseX, mouseY)) {
 			Main.square.setX(mouseX);
 			Main.square.setY(mouseY);
 			Main.pSlider.setVal(1.0);
-			Main.iSlider.setVal(Main.iSlider.min);
-			Main.dSlider.setVal(Main.dSlider.min);
+			Main.iSlider.setVal(0.0);
+			Main.dSlider.setVal(0.0);
 		}
 		Main.P = pSlider.getVal();
 		Main.I = iSlider.getVal();
