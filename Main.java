@@ -1,119 +1,138 @@
-import java.awt.*;
-import java.awt.event.*;
-import java.util.Random;
-import javax.swing.*;
-import java.*;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.MouseInfo;
+import java.awt.Point;
+import java.awt.TextField;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.JTextField;
+import javax.swing.Timer;
 
-//extends JPanel implements ActionListener
 public class Main extends JPanel implements ActionListener {
-	// Graphical constants
-	static final long serialVersionUID = 536871008;
-	public static JFrame window = new JFrame("GUI Test");
-	public static TextField textField = new TextField();
-	public static Main panel = new Main();
-	public static Container c = window.getContentPane();
-	public static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-	public static Timer clock = new Timer(Main.timerSpeed, panel);
-	public static Point mousePoint = MouseInfo.getPointerInfo().getLocation();
-	// Fields
-	public static int displayW = 1000, displayH = 1000, timerSpeed = 300, speed = 1; // full screen:
-	public static final int defaultSpeed = 50;
-	// displayW=1389,displayH=855
-	// Objects
+    static final long serialVersionUID = 536871008L;
 
-	public static Collision checker = new Collision();
-	public static Game game = new Game();
-	public static int headX = 0;
-	public static int headY = 0;
-	public static Drawer lWall = new Drawer(-1, 0, 1, Main.displayH, "rect");
-	public static Drawer rWall = new Drawer(Main.displayW, 0, 1, Main.displayH, "rect");
-	public static Drawer tWall = new Drawer(0, -1, Main.displayW, 1, "rect");
-	public static Drawer bWall = new Drawer(0, Main.displayH, Main.displayW, 1, "rect");
-	public static boolean isOUT = false;
-	public static int velocityX = 0;
-	public static int velocityY = 0;
-	public static int counter = 0;
-	public static int counterSpeed = Main.defaultSpeed;
-	public static int snakeLen = 1;
-	public static Drawer apple = new Drawer(100, 100, 20, 20);
+    public static JFrame window = new JFrame("PID Test");
 
-	public void paintComponent(Graphics g) {
-		Main.apple.rect(g, Color.red, true);
-		String score = "SCORE: " + new Integer(Main.snakeLen - 1);
+    public static TextField textField = new TextField();
 
-		if (Main.isOUT) {
-			g.setColor(Color.white);
-			g.drawString("YOU LOST", 20, 20);
+    public static Main panel = new Main();
 
-		} else {
+    public static Container c = window.getContentPane();
 
-			Main.game.drawSnake(g, Main.snakeLen);
-			// Main.game.setUnit(g, Main.headX, Main.headY, true);
-		}
-		g.setColor(Color.blue);
-		g.drawString(score, 20, 20);
-	}
+    public static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
-	public void actionPerformed(ActionEvent e) {
-		// System.out.println(Main.game.isOut());
+    public static Timer clock = new Timer(Main.timerSpeed, panel);
 
-		Main.displayW = window.getContentPane().getWidth();
-		Main.displayH = window.getContentPane().getHeight();
+    public static Point mousePoint = MouseInfo.getPointerInfo().getLocation();
 
-		if (!Main.isOUT) {
+    public static int displayW = 500;
 
-			Main.counter++;
+    public static int displayH = 500;
 
-			if (Main.checker.autoCollide(Main.game.getHead(), Main.apple) == true) {
-				apple.setX((int) (Math.abs(Math.random()) * (Main.displayW - 20)));
-				apple.setY((int) (Math.abs(Math.random()) * (Main.displayH - 20)));
-				Main.snakeLen++;
-				if (Main.counterSpeed >= 10) {
-					Main.counterSpeed -= 10;
-					if (Main.counterSpeed < 10) {
-						Main.counterSpeed = 10;
-					}
-				}
+    public static int timerSpeed = 10;
 
-			}
+    public static int speed = 1;
 
-			if (game.isOut()) {
+    public static final int CURSORXOFFSET = 43;
 
-				Main.game.reset();
+    public static final int CURSORYOFFSET = 46;
 
-			} else {
-				Main.isOUT = false;
-				if (Main.counter % Main.counterSpeed == 0) {
-					Main.headX += Main.velocityX;
-					Main.headY += Main.velocityY;
-				}
+    public static boolean mousePressed = false;
 
-			}
-			/*
-			 * if (checker.autoCollide(lWall, game.getHead()) || checker.autoCollide(rWall,
-			 * game.getHead()) || checker.autoCollide(tWall, game.getHead()) ||
-			 * checker.autoCollide(bWall, game.getHead())) { System.out.println("OUT"); }
-			 */
-		}
-		repaint();
-	}
+    public static final int defaultSpeed = 50;
 
-	public static void main(String[] argv) throws Exception {
+    static double P = 1.0D;
 
-		JTextField textField = new JTextField();
-		textField.addKeyListener(new MKeyListener());
-		// MouseListener mouse = new MouseListen();
-		textField.addMouseListener(new MouseListen());
-		panel.setBackground(Color.black);
-		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		window.add(textField);
-		window.setBounds(0, 0, displayW, displayH);
-		c.add(panel);
-		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		window.setVisible(true);
-		window.setResizable(false);
-		clock.start();
-	}
+    static double I = 0.0D;
+
+    static double D = 0.0D;
+
+    public static Drawer square = new Drawer(10.0D, 10.0D, 50.0D, 50.0D, P, I, D);
+
+    public static Slider pSlider = new Slider(100.0D, 25.0D, 25.0D, 25.0D, false, true, 200.0D, 300.0D, 1.0E-6D, 1.9D,
+            1.0D);
+
+    public static Slider iSlider = new Slider(100.0D, 50.0D, 25.0D, 25.0D, false, true, 200.0D, 300.0D, 0.0D, 100.0D);
+
+    public static Slider dSlider = new Slider(100.0D, 75.0D, 25.0D, 25.0D, false, true, 200.0D, 300.0D, 1.0E-9D,
+            0.001D);
+
+    public static Button reset = new Button(0.0D, 0.0D, 50.0D, 50.0D);
+
+    public double offset = 50.0D;
+
+    public void paintComponent(Graphics paramGraphics) {
+        this.offset = displayW / 10.0D;
+        square.setMinX(0.0D);
+        square.setMinY(0.0D);
+        square.setMaxX(displayW - square.getW() / 2.0D);
+        square.setMaxY(displayH - square.getH() / 2.0D);
+        pSlider.setMinX((displayW / 2) - this.offset);
+        pSlider.setMaxX((displayW / 2) + this.offset);
+        iSlider.setMinX((displayW / 2) - this.offset);
+        iSlider.setMaxX((displayW / 2) + this.offset);
+        dSlider.setMinX((displayW / 2) - this.offset);
+        dSlider.setMaxX((displayW / 2) + this.offset);
+        double d1 = ((MouseInfo.getPointerInfo().getLocation()).x - 43);
+        double d2 = ((MouseInfo.getPointerInfo().getLocation()).y - 46);
+        pSlider.setVal(P);
+        iSlider.setVal(I);
+        dSlider.setVal(D);
+        square.oval(paramGraphics, Color.green, true);
+        reset.rect(paramGraphics, Color.red, true);
+        pSlider.slide(paramGraphics, Color.blue, true, ((MouseInfo.getPointerInfo().getLocation()).x - 43),
+                ((MouseInfo.getPointerInfo().getLocation()).y - 46));
+        iSlider.slide(paramGraphics, Color.blue, true, ((MouseInfo.getPointerInfo().getLocation()).x - 43),
+                ((MouseInfo.getPointerInfo().getLocation()).y - 46));
+        dSlider.slide(paramGraphics, Color.blue, true, ((MouseInfo.getPointerInfo().getLocation()).x - 43),
+                ((MouseInfo.getPointerInfo().getLocation()).y - 46));
+        paramGraphics.setColor(Color.white);
+        paramGraphics.drawString("P: " + P, displayW / 2 + (int) this.offset + 5, 30);
+        paramGraphics.drawString("I: " + I, displayW / 2 + (int) this.offset + 5, 55);
+        paramGraphics.drawString("D: " + D, displayW / 2 + (int) this.offset + 5, 80);
+        paramGraphics.drawString("reset", 5, 30);
+        if (reset.isPressed(d1, d2)) {
+            square.setX(d1);
+            square.setY(d2);
+            pSlider.setVal(1.0D);
+            iSlider.setVal(iSlider.min);
+            dSlider.setVal(dSlider.min);
+        }
+        P = pSlider.getVal();
+        I = iSlider.getVal();
+        D = dSlider.getVal();
+        square.updateControllers(P, I, D);
+        double d3 = ((MouseInfo.getPointerInfo().getLocation()).x - 43);
+        double d4 = ((MouseInfo.getPointerInfo().getLocation()).y - 46);
+        square.setXPID(d3);
+        square.setYPID(d4);
+    }
+
+    public void actionPerformed(ActionEvent paramActionEvent) {
+        displayW = panel.getWidth();
+        displayH = panel.getHeight();
+        mousePoint = MouseInfo.getPointerInfo().getLocation();
+        repaint();
+    }
+
+    public static void main(String[] paramArrayOfString) throws Exception {
+        JTextField jTextField = new JTextField();
+        JSlider jSlider = new JSlider(0);
+        panel.setBackground(Color.black);
+        window.setDefaultCloseOperation(3);
+        window.add(jTextField);
+        panel.addMouseListener(new MouseListen());
+        window.setBounds(0, 0, displayW, displayH);
+        c.add(panel);
+        window.setDefaultCloseOperation(3);
+        window.setVisible(true);
+        window.setResizable(true);
+        clock.start();
+    }
 }

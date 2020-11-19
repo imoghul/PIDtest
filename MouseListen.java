@@ -1,28 +1,21 @@
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
-public class MouseListen implements MouseListener {
+class MouseListen implements MouseListener {
+    public void mouseClicked(MouseEvent paramMouseEvent) {
+    }
 
-   // public Point mousePoint = MouseInfo.getPointerInfo().getLocation();
+    public void mouseEntered(MouseEvent paramMouseEvent) {
+    }
 
-   public Point getMousePoint() {
-      return MouseInfo.getPointerInfo().getLocation();
-   }
+    public void mouseExited(MouseEvent paramMouseEvent) {
+    }
 
-   public void mousePressed(MouseEvent e) {
-   }
+    public void mousePressed(MouseEvent paramMouseEvent) {
+        Main.mousePressed = true;
+    }
 
-   public void mouseReleased(MouseEvent e) {
-   }
-
-   public void mouseEntered(MouseEvent e) {
-   }
-
-   public void mouseExited(MouseEvent e) {
-   }
-
-   public void mouseClicked(MouseEvent e) {
-   }
-
+    public void mouseReleased(MouseEvent paramMouseEvent) {
+        Main.mousePressed = false;
+    }
 }
