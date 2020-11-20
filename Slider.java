@@ -96,7 +96,7 @@ public class Slider extends Button {
         }
         drawState(g, unpressed, pressed, filled, filledPressed, type, mouseX, mouseY);
         midBar.draw(g, Color.gray, true, "rect");
-        new Drawer(getX(), getY(), 1, 1).draw(g, Color.white, true, "oval");
+        new Drawer(getX(), getY(), 3, 3).draw(g, Color.white, true, "oval");
     }
 
     public double getVal(double minimum, double maximum) {

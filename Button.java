@@ -44,7 +44,7 @@ public class Button extends Drawer {
         return isPressed(p.getX(), p.getY());
     }
 
-    public boolean isClear() {
+    private boolean isClear() {
         return getX() == 0 && getY() == 0 && getW() == 0 && getH() == 0;
     }
 }
