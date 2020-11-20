@@ -8,6 +8,7 @@ public class Collision {
     public boolean ovalCollide(Drawer one, Drawer two) {
         // check if (xcoor,ycoor) is in elipse with (x,y)center and width,w and height,h
         // (Math.pow(((xcoor-x)/(w/2)),2) + Math.pow((ycoor-y)/(h/2),2))<=1
+
         for (int xcoor = 0; xcoor < Main.displayW; xcoor++) {
             for (int ycoor = 0; ycoor < Main.displayH; ycoor++) {
                 if (pointInOval(xcoor, ycoor, one) && pointInOval(xcoor, ycoor, two)) {
@@ -15,7 +16,23 @@ public class Collision {
                 }
             }
         }
+
         return false;
+    }
+
+    private double plugOval(double xcoor, double ycoor, Drawer oval) {
+        double x = oval.getX(), y = oval.getY(), w = oval.getW(), h = oval.getH();
+        return (Math.pow(((xcoor - x) / (w / 2)), 2) + Math.pow((ycoor - y) / (h / 2), 2));
+    }
+
+    public boolean ovalCollideSmart(Drawer one, Drawer two) {
+        double d = Math.sqrt(Math.pow(one.getX() - two.getX(), 2) + Math.pow(one.getY() - two.getY(), 2));
+        double a1 = one.getW() / 2, b1 = one.getH() / 2, a2 = two.getW() / 2, b2 = two.getH() / 2;
+        double theta2 = Math.atan2(one.getY() - two.getY(), one.getX() - two.getX());
+        double theta1 = Math.atan2(two.getY() - one.getY(), two.getX() - one.getX());
+        double r1 = Math.sqrt(Math.pow(a1 * Math.cos(theta1), 2) + Math.pow(b1 * Math.sin(theta1), 2));
+        double r2 = Math.sqrt(Math.pow(a2 * Math.cos(theta2), 2) + Math.pow(b2 * Math.sin(theta2), 2));
+        return (d < (r1 + r2));
     }
 
     public boolean pointInOval(double xcoor, double ycoor, Drawer oval) {
@@ -62,7 +79,7 @@ public class Collision {
             return ovalRectCollide(two, one);
         } else if (one.getType().equals("oval") && two.getType().equals("oval")) {
             // System.out.println("oval and oval");
-            return ovalCollide(one, two);
+            return ovalCollideSmart(one, two);
         }
         return false;
     }
