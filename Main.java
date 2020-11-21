@@ -8,6 +8,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.concurrent.TimeUnit;
 import java.util.Scanner;
+import java.util.Random;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 //extends JPanel implements ActionListener
 public class Main extends JPanel implements ActionListener {
@@ -38,8 +41,9 @@ public class Main extends JPanel implements ActionListener {
 	public static Slider iSlider = new Slider(100.0, 50.0, 25.0, 25.0, false, true, 200.0, 300.0, -1, 100, Main.I);
 	public static Slider dSlider = new Slider(100.0, 75.0, 25.0, 25.0, false, true, 200.0, 300.0, -.001, .001, Main.D);
 	public static Button reset = new Button(0.0, 0.0, 50.0, 50.0);
-
+	public Color squareColor = Color.red;
 	public double offset = 50;
+	public int colorCounter = 0;
 
 	public void paintComponent(Graphics g) {
 		// update stuff
@@ -59,8 +63,15 @@ public class Main extends JPanel implements ActionListener {
 		Main.pSlider.setVal(Main.P);
 		Main.iSlider.setVal(Main.I);
 		Main.dSlider.setVal(Main.D);
+		colorCounter++;
 		// draw objects and strings
-		Main.square.oval(g, Color.green, true);
+		if (Main.square.xcontroller.hasReached(Main.square.getX(), mouseX)
+				&& Main.square.ycontroller.hasReached(Main.square.getY(), mouseY)) {
+			squareColor = Color.GREEN;
+		} else {
+			squareColor = new Color(((colorCounter % 20) + 5) * 10, 0, 0);// Color.RED;
+		}
+		Main.square.oval(g, squareColor, true);
 		// if (!Main.reset.isPressed(mouseX, mouseY)) {
 		// Main.reset.rect(g, Color.red, true);
 		// } else {

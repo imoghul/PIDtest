@@ -58,6 +58,23 @@ public class Collision {
         return false;
     }
 
+    public boolean ovalRectCollideSmart(Drawer oval, Drawer rect) {
+        // double d = Math.sqrt(Math.pow(oval.getX() - rect.getX(), 2) +
+        // Math.pow(oval.getY() - rect.getY(), 2));
+        // double a1 = oval.getW() / 2, b1 = oval.getH() / 2, a2 = rect.getW() / 2, b2 =
+        // rect.getH() / 2;
+        // double theta2 = Math.atan2(oval.getY() - rect.getY(), oval.getX() -
+        // rect.getX());
+        // double theta1 = Math.atan2(rect.getY() - oval.getY(), rect.getX() -
+        // oval.getX());
+        // double r1 = Math.sqrt(Math.pow(a1 * Math.cos(theta1), 2) + Math.pow(b1 *
+        // Math.sin(theta1), 2));
+        // double r2 = Math.sqrt(Math.pow(a2 * Math.cos(theta2), 2) + Math.pow(b2 *
+        // Math.sin(theta2), 2));
+        // return (d < (r1 + r2));
+        return false;
+    }
+
     public boolean autoIsIn(double x, double y, Drawer one) {
         if (one.getType().equals("rect")) {
             return pointInRect(x, y, one);

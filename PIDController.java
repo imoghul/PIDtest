@@ -42,4 +42,8 @@ public class PIDController {
         return actual + P * (error) + I * integral + D * derivative;
     }
 
+    public boolean hasReached(double actual, double desired) {
+        return Math.abs(actual - desired) <= 0.01;
+    }
+
 }
