@@ -2,7 +2,7 @@ import java.awt.*;
 
 public class Button extends Drawer {
     Collision checker = new Collision();
-    boolean beganIn = false;
+    boolean wasIn = false;
     private double mouseX, mouseY;
 
     public Button(double x, double y, double w, double h) {
@@ -12,21 +12,22 @@ public class Button extends Drawer {
     public boolean isPressed(double x, double y) {
         mouseX = x;
         mouseY = y;
-        // return Main.mousePressed && checker.autoIsIn(x, y, this);
+        boolean beganIn = (checker.autoIsIn(Main.mouseXOrig, Main.mouseYOrig, this)
+                || checker.autoIsIn(Main.mouseXOrig, Main.mouseYOrig, getMidBar()));
         if (Main.mousePressed) {
-            if (beganIn == false) {
-                beganIn = checker.autoIsIn(x, y, this);
+            if (wasIn == false) {
+                wasIn = checker.autoIsIn(x, y, this) || checker.autoIsIn(x, y, getMidBar());
             }
-            if (beganIn && Main.mouseOccupied.isClear()) {
+            if (wasIn && Main.mouseOccupied.isClear()) {
                 Main.mouseOccupied = this;
             }
             if (Main.mouseOccupied == this) {
-                return beganIn;
+                return wasIn;
             } else {
                 return false;
             }
         } else {
-            beganIn = false;
+            wasIn = false;
             return false;
         }
     }
@@ -46,5 +47,9 @@ public class Button extends Drawer {
 
     private boolean isClear() {
         return getX() == 0 && getY() == 0 && getW() == 0 && getH() == 0;
+    }
+
+    public Drawer getMidBar() {
+        return this;
     }
 }

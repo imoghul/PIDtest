@@ -28,11 +28,31 @@ public class Drawer {
         ycontroller = new PIDController(P, I, D, (double) delay / 1000.0);
     }
 
+    public Drawer(Drawer newOne) {
+        x = newOne.getX();
+        y = newOne.getY();
+        w = newOne.getW();
+        h = newOne.getH();
+        type = newOne.getType();
+        minX = newOne.getMinX();
+        maxX = newOne.getMaxX();
+        minY = newOne.getMinY();
+        maxY = newOne.getMaxY();
+        xcontroller = newOne.xcontroller;
+        ycontroller = newOne.ycontroller;
+        delay = newOne.delay;
+    }
+
     public Drawer(double newX, double newY, double newW, double newH) {
         x = newX;
         y = newY;
         w = newW;
         h = newH;
+    }
+
+    public Drawer(double newX, double newY, double newW, double newH, String t) {
+        this(newX, newY, newW, newH);
+        type = t;
     }
 
     public Drawer(double newX, double newY, double newW, double newH, double P, double I, double D, String t) {
@@ -57,7 +77,10 @@ public class Drawer {
     }
 
     public String getType() {
-        return type;
+        if (type != null) {
+            return type;
+        }
+        return "";
     }
 
     public double getMinX() {
@@ -236,6 +259,14 @@ public class Drawer {
 
     public void draw(Graphics g, Color c, boolean filled, String t) {
         type = t;
+        if (type.equals("rect")) {
+            rect(g, c, filled);
+        } else if (type.equals("oval")) {
+            oval(g, c, filled);
+        }
+    }
+
+    public void draw(Graphics g, Color c, boolean filled) {
         if (type.equals("rect")) {
             rect(g, c, filled);
         } else if (type.equals("oval")) {

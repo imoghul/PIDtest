@@ -29,10 +29,14 @@ public class Main extends JPanel implements ActionListener {
 	public static final int CURSORYOFFSET = 46;
 	public static boolean mousePressed = false;
 	public static Button mouseOccupied = new Button(0.0, 0.0, 0.0, 0.0);;
+	public static double mouseXOrig = 0;
+	public static double mouseYOrig = 0;
+	public static double mouseX, mouseY;
+	public static boolean mouseJustPressed = false;
 	public static final int defaultSpeed = 50;
 	// displayW=1389,displayH=855
 	// Objects
-
+	public static Collision checker = new Collision();
 	static double P = 1.0;// .1;// 1.1;//.3;
 	static double I = 0.0;// 3;// 30;//30;
 	static double D = 0.0;// 0.00001;// -.001;//.001;
@@ -58,44 +62,25 @@ public class Main extends JPanel implements ActionListener {
 		Main.iSlider.setMaxX((Main.displayW / 2) + offset);
 		Main.dSlider.setMinX((Main.displayW / 2) - offset);
 		Main.dSlider.setMaxX((Main.displayW / 2) + offset);
-		double mouseX = MouseInfo.getPointerInfo().getLocation().x - CURSORXOFFSET;
-		double mouseY = MouseInfo.getPointerInfo().getLocation().y - CURSORYOFFSET;
+		Main.mouseX = MouseInfo.getPointerInfo().getLocation().x - CURSORXOFFSET;
+		Main.mouseY = MouseInfo.getPointerInfo().getLocation().y - CURSORYOFFSET;
 		Main.pSlider.setVal(Main.P);
 		Main.iSlider.setVal(Main.I);
 		Main.dSlider.setVal(Main.D);
 		colorCounter++;
+		System.out.println(Main.mouseJustPressed);
 		// draw objects and strings
-		if (Main.square.xcontroller.hasReached(Main.square.getX(), mouseX)
-				&& Main.square.ycontroller.hasReached(Main.square.getY(), mouseY)) {
+		if (Main.square.xcontroller.hasReached(Main.square.getX(), Main.mouseX)
+				&& Main.square.ycontroller.hasReached(Main.square.getY(), Main.mouseY)) {
 			squareColor = Color.GREEN;
 		} else {
 			squareColor = new Color(((colorCounter % 20) + 5) * 10, 0, 0);// Color.RED;
 		}
 		Main.square.oval(g, squareColor, true);
-		// if (!Main.reset.isPressed(mouseX, mouseY)) {
-		// Main.reset.rect(g, Color.red, true);
-		// } else {
-		// Main.reset.rect(g, new Color(150, 0, 0), true);
-		// }
-		// if (!Main.pSlider.isPressed(mouseX, mouseY)) {
-		// Main.pSlider.slide(g, Color.blue, true, mouseX, mouseY);
-		// } else {
-		// Main.pSlider.slide(g, new Color(0, 0, 130), true, mouseX, mouseY);
-		// }
-		// if (!Main.iSlider.isPressed(mouseX, mouseY)) {
-		// Main.iSlider.slide(g, Color.blue, true, mouseX, mouseY);
-		// } else {
-		// Main.iSlider.slide(g, new Color(0, 0, 130), true, mouseX, mouseY);
-		// }
-		// if (!Main.dSlider.isPressed(mouseX, mouseY)) {
-		// Main.dSlider.slide(g, Color.blue, true, mouseX, mouseY);
-		// } else {
-		// Main.dSlider.slide(g, new Color(0, 0, 130), true, mouseX, mouseY);
-		// }
-		Main.reset.drawState(g, Color.red, new Color(150, 0, 0), true, true, "rect", mouseX, mouseY);
-		Main.pSlider.slide(g, Color.blue, new Color(0, 0, 130), false, true, "oval", mouseX, mouseY);
-		Main.iSlider.slide(g, Color.blue, new Color(0, 0, 130), false, true, "oval", mouseX, mouseY);
-		Main.dSlider.slide(g, Color.blue, new Color(0, 0, 130), false, true, "oval", mouseX, mouseY);
+		Main.reset.drawState(g, Color.red, new Color(150, 0, 0), true, true, "rect", Main.mouseX, Main.mouseY);
+		Main.pSlider.slide(g, Color.blue, new Color(0, 0, 130), false, true, "oval", Main.mouseX, Main.mouseY);
+		Main.iSlider.slide(g, Color.blue, new Color(0, 0, 130), false, true, "oval", Main.mouseX, Main.mouseY);
+		Main.dSlider.slide(g, Color.blue, new Color(0, 0, 130), false, true, "oval", Main.mouseX, Main.mouseY);
 		g.setColor(Color.white);
 		// g.drawString("x: " + Main.square.getX(), 0, 20);
 		// g.drawString("y: " + Main.square.getY(), 0, 40);
@@ -115,8 +100,8 @@ public class Main extends JPanel implements ActionListener {
 		Main.I = iSlider.getVal();
 		Main.D = dSlider.getVal();
 		Main.square.updateControllers(Main.P, Main.I, Main.D);
-		double desiredX = MouseInfo.getPointerInfo().getLocation().x - CURSORXOFFSET;// 120.0;
-		double desiredY = MouseInfo.getPointerInfo().getLocation().y - CURSORYOFFSET;// 120.0;
+		double desiredX = Main.mouseX;// 120.0;
+		double desiredY = Main.mouseY;// 120.0;
 		Main.square.setXPID(desiredX);
 		Main.square.setYPID(desiredY);
 		/*

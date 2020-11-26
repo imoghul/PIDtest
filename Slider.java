@@ -4,7 +4,7 @@ public class Slider extends Button {
     boolean vertical, horizontal;
 
     public double midBarX, midBarY, midBarW, midBarH;
-    Drawer midBar;
+    private Drawer midBar;
 
     public double min = 0.0, max = 1.0;
 
@@ -40,33 +40,13 @@ public class Slider extends Button {
             midBarW = 3;
             midBarX = x - (int) midBarW / 2;
         }
-        midBar = new Drawer(midBarX, midBarY, midBarW, midBarH);
+        midBar = new Drawer(midBarX, midBarY, midBarW, midBarH, "rect");
     }
 
     public Slider(double x, double y, double w, double h, boolean vert, boolean hori, double min, double max,
             double small, double big, double initial) {
-        this(x, y, w, h, vert, hori, small, big);
-        if (horizontal) {
-            setMinY(y);
-            setMaxY(y);
-            setMinX(min);
-            setMaxX(max);
-            midBarX = min;
-            midBarW = max - min;
-            midBarH = 3;
-            midBarY = y - (int) midBarH / 2;
-        } else if (vertical) {
-            setMinX(x);
-            setMaxX(x);
-            setMinY(min);
-            setMaxY(max);
-            midBarY = min;
-            midBarH = max - min;
-            midBarW = 3;
-            midBarX = x - (int) midBarW / 2;
-        }
+        this(x, y, w, h, vert, hori, min, max, small, big);
         setVal(initial);
-        midBar = new Drawer(midBarX, midBarY, midBarW, midBarH);
     }
 
     private void updateMidBar() {
@@ -81,7 +61,7 @@ public class Slider extends Button {
             midBarW = 3;
             midBarX = getX() - (int) midBarW / 2;
         }
-        midBar = new Drawer(midBarX, midBarY, midBarW, midBarH);
+        midBar = new Drawer(midBarX, midBarY, midBarW, midBarH, "rect");
     }
 
     public void slide(Graphics g, Color unpressed, Color pressed, boolean filled, boolean filledPressed, String type,
@@ -95,7 +75,7 @@ public class Slider extends Button {
             setYSafe(getY());
         }
         drawState(g, unpressed, pressed, filled, filledPressed, type, mouseX, mouseY);
-        midBar.draw(g, Color.gray, true, "rect");
+        midBar.draw(g, Color.gray, true);
         new Drawer(getX(), getY(), 3, 3).draw(g, Color.white, true, "oval");
     }
 
@@ -127,6 +107,12 @@ public class Slider extends Button {
 
     private double map(double input, double inputMin, double inputMax, double outputMin, double outputMax) {
         return outputMin + ((outputMax - outputMin) / (inputMax - inputMin)) * (input - inputMin);
+    }
+
+    @Override
+    public Drawer getMidBar() {
+        updateMidBar();
+        return midBar;
     }
 
 }
