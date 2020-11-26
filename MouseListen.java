@@ -1,4 +1,4 @@
-import Graphics.Drawer;
+import Graphics.Area;
 import Graphics.PIDController;
 import Graphics.Button;
 import Graphics.Slider;
@@ -24,14 +24,14 @@ class MouseListen implements MouseListener {
 
     @Override
     public void mousePressed(MouseEvent arg0) {
-        Main.mousePressed = true;
+        Main.mouse.setIsPressed(true);// Main.mousePressed = true;
 
     }
 
     @Override
     public void mouseReleased(MouseEvent arg0) {
-        Main.mousePressed = false;
-        Main.mouseOccupied = new Button(0.0, 0.0, 0.0, 0.0, "clear");
+        Main.mouse.setIsPressed(false);// Main.mousePressed = false;
+        Main.mouse.clear();
     }
 
 }

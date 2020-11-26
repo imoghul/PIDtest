@@ -1,8 +1,9 @@
-import Graphics.Drawer;
+import Graphics.Area;
 import Graphics.PIDController;
 import Graphics.Button;
 import Graphics.Slider;
 import Graphics.Collision;
+import Graphics.Mouse;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -33,12 +34,6 @@ public class Main extends JPanel implements ActionListener {
 	public static int displayW = 500, displayH = 500, timerSpeed = 10, speed = 1; // full screen:
 	public static final int CURSORXOFFSET = 43;
 	public static final int CURSORYOFFSET = 46;
-	public static boolean mousePressed = false;
-	public static Button mouseOccupied = new Button(0.0, 0.0, 0.0, 0.0, "clear");;
-	public static double mouseXOrig = 0;
-	public static double mouseYOrig = 0;
-	public static double mouseX, mouseY;
-	public static boolean mouseJustPressed = false;
 	public static final int defaultSpeed = 50;
 	// displayW=1389,displayH=855
 	// Objects
@@ -46,7 +41,7 @@ public class Main extends JPanel implements ActionListener {
 	static double P = 1.0;// .1;// 1.1;//.3;
 	static double I = 0.0;// 3;// 30;//30;
 	static double D = 0.0;// 0.00001;// -.001;//.001;
-	public static Drawer sprite = new Drawer(10.0, 10.0, 50.0, 50.0, P, I, D);
+	public static Area sprite = new Area(10.0, 10.0, 50.0, 50.0, P, I, D);
 	public static Slider pSlider = new Slider(100.0, 25.0, 25.0, 25.0, false, true, 200.0, 300.0, .000001, 1.9, Main.P);
 	public static Slider iSlider = new Slider(100.0, 50.0, 25.0, 25.0, false, true, 200.0, 300.0, -1, 100, Main.I);
 	public static Slider dSlider = new Slider(100.0, 75.0, 25.0, 25.0, false, true, 200.0, 300.0, -.001, .001, Main.D);
@@ -54,6 +49,7 @@ public class Main extends JPanel implements ActionListener {
 	public static Color spriteColor = Color.red;
 	public static double offset = 50;
 	public static int colorCounter = 0;
+	public static Mouse mouse = new Mouse();
 
 	public void paintComponent(Graphics g) {
 
@@ -77,7 +73,7 @@ public class Main extends JPanel implements ActionListener {
 
 	public static void main(String[] argv) throws Exception {
 		JTextField textField = new JTextField();
-		JSlider PGain = new JSlider(JSlider.HORIZONTAL);
+		Main.mouse.clear();
 		Main.panel.setBackground(Color.black);
 		Main.window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		Main.window.add(textField);
@@ -91,53 +87,52 @@ public class Main extends JPanel implements ActionListener {
 	}
 
 	public static void updateMouse() {
-		if (!Main.mousePressed) {
-			Main.mouseXOrig = Main.mouseX;// MouseInfo.getPointerInfo().getLocation().x;
-			Main.mouseYOrig = Main.mouseY;// MouseInfo.getPointerInfo().getLocation().y;
-			Main.mouseJustPressed = true;
-		} else {
-			Main.mouseJustPressed = false;
-		}
+		Main.mouse.setX(MouseInfo.getPointerInfo().getLocation().x - CURSORXOFFSET);// Main.mouseX =
+																					// MouseInfo.getPointerInfo().getLocation().x
+																					// - CURSORXOFFSET;
+		Main.mouse.setY(MouseInfo.getPointerInfo().getLocation().y - CURSORYOFFSET);// Main.mouseY =
+																					// MouseInfo.getPointerInfo().getLocation().y
+																					// - CURSORYOFFSET;
+		Main.mouse.update(Main.mouse.getX(), Main.mouse.getY());
 	}
 
 	public static void updateValues() {
-		Main.offset = Main.displayW / 5.0;
+		// update bounds
 		Main.sprite.setMinX(0);
 		Main.sprite.setMinY(0);
 		Main.sprite.setMaxX(Main.displayW - Main.sprite.getW() / 2.0);
 		Main.sprite.setMaxY(Main.displayH - Main.sprite.getH() / 2.0);
+		// update sliders
+		Main.offset = Main.displayW / 5.0;
 		Main.pSlider.setMinCoor((Main.displayW / 2) - offset);
 		Main.pSlider.setMaxCoor((Main.displayW / 2) + offset);
 		Main.iSlider.setMinCoor((Main.displayW / 2) - offset);
 		Main.iSlider.setMaxCoor((Main.displayW / 2) + offset);
 		Main.dSlider.setMinCoor((Main.displayW / 2) - offset);
 		Main.dSlider.setMaxCoor((Main.displayW / 2) + offset);
-		Main.mouseX = MouseInfo.getPointerInfo().getLocation().x - CURSORXOFFSET;
-		Main.mouseY = MouseInfo.getPointerInfo().getLocation().y - CURSORYOFFSET;
+		// make sure sliders maintain positions
 		Main.pSlider.setVal(Main.P);
 		Main.iSlider.setVal(Main.I);
 		Main.dSlider.setVal(Main.D);
+		// update checker's values
 		Main.checker.displayH = Main.displayH;
 		Main.checker.displayW = Main.displayW;
+
 		Main.colorCounter++;
 	}
 
 	public static void drawStuff(Graphics g) {
-		if (Main.sprite.xcontroller.hasReached(Main.sprite.getX(), Main.mouseX)
-				&& Main.sprite.ycontroller.hasReached(Main.sprite.getY(), Main.mouseY)) {
+		if (Main.sprite.xcontroller.hasReached(Main.sprite.getX(), Main.mouse.getX())
+				&& Main.sprite.ycontroller.hasReached(Main.sprite.getY(), Main.mouse.getY())) {
 			Main.spriteColor = Color.GREEN;
 		} else {
 			Main.spriteColor = new Color(((Main.colorCounter % 20) + 5) * 10, 0, 0);// Color.RED;
 		}
 		Main.sprite.oval(g, spriteColor, true);
-		Main.reset.drawState(g, Color.red, new Color(150, 0, 0), true, true, "rect", Main.mouseX, Main.mouseY,
-				Main.mouseXOrig, Main.mouseYOrig, Main.mouseJustPressed, Main.mousePressed, Main.mouseOccupied);
-		Main.pSlider.slide(g, Color.blue, new Color(0, 0, 130), true, true, "oval", Main.mouseX, Main.mouseY,
-				Main.mouseXOrig, Main.mouseYOrig, Main.mouseJustPressed, Main.mousePressed, Main.mouseOccupied);
-		Main.iSlider.slide(g, Color.blue, new Color(0, 0, 130), true, true, "oval", Main.mouseX, Main.mouseY,
-				Main.mouseXOrig, Main.mouseYOrig, Main.mouseJustPressed, Main.mousePressed, Main.mouseOccupied);
-		Main.dSlider.slide(g, Color.blue, new Color(0, 0, 130), true, true, "oval", Main.mouseX, Main.mouseY,
-				Main.mouseXOrig, Main.mouseYOrig, Main.mouseJustPressed, Main.mousePressed, Main.mouseOccupied);
+		Main.reset.drawState(g, Color.red, new Color(150, 0, 0), true, true, "rect", Main.mouse);
+		Main.pSlider.slide(g, Color.blue, new Color(0, 0, 130), true, true, "oval", Main.mouse);
+		Main.iSlider.slide(g, Color.blue, new Color(0, 0, 130), true, true, "oval", Main.mouse);
+		Main.dSlider.slide(g, Color.blue, new Color(0, 0, 130), true, true, "oval", Main.mouse);
 
 		g.setColor(Color.white);
 		// g.drawString("x: " + Main.sprite.getX(), 0, 20);
@@ -149,10 +144,9 @@ public class Main extends JPanel implements ActionListener {
 	}
 
 	public static void PIDLoops() {
-		if (Main.reset.isPressed(Main.mouseX, Main.mouseY, Main.mouseXOrig, Main.mouseYOrig, Main.mouseJustPressed,
-				Main.mousePressed, Main.mouseOccupied)) {
-			Main.sprite.setX(Main.mouseX);
-			Main.sprite.setY(Main.mouseY);
+		if (Main.reset.isPressed(Main.mouse)) {
+			Main.sprite.setX(Main.mouse.getX());
+			Main.sprite.setY(Main.mouse.getY());
 			Main.pSlider.setVal(1.0);
 			Main.iSlider.setVal(0.0);
 			Main.dSlider.setVal(0.0);
@@ -161,8 +155,8 @@ public class Main extends JPanel implements ActionListener {
 		Main.I = iSlider.getVal();
 		Main.D = dSlider.getVal();
 		Main.sprite.updateControllers(Main.P, Main.I, Main.D);
-		double desiredX = Main.mouseX;// 120.0;
-		double desiredY = Main.mouseY;// 120.0;
+		double desiredX = Main.mouse.getX();// 120.0;
+		double desiredY = Main.mouse.getY();// 120.0;
 		Main.sprite.setXPID(desiredX);
 		Main.sprite.setYPID(desiredY);
 	}
