@@ -1,3 +1,9 @@
+import Graphics.Drawer;
+import Graphics.PIDController;
+import Graphics.Button;
+import Graphics.Slider;
+import Graphics.Collision;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Random;
@@ -28,7 +34,7 @@ public class Main extends JPanel implements ActionListener {
 	public static final int CURSORXOFFSET = 43;
 	public static final int CURSORYOFFSET = 46;
 	public static boolean mousePressed = false;
-	public static Button mouseOccupied = new Button(0.0, 0.0, 0.0, 0.0);;
+	public static Button mouseOccupied = new Button(0.0, 0.0, 0.0, 0.0, "clear");;
 	public static double mouseXOrig = 0;
 	public static double mouseYOrig = 0;
 	public static double mouseX, mouseY;
@@ -40,98 +46,32 @@ public class Main extends JPanel implements ActionListener {
 	static double P = 1.0;// .1;// 1.1;//.3;
 	static double I = 0.0;// 3;// 30;//30;
 	static double D = 0.0;// 0.00001;// -.001;//.001;
-	public static Drawer square = new Drawer(10.0, 10.0, 50.0, 50.0, P, I, D);
+	public static Drawer sprite = new Drawer(10.0, 10.0, 50.0, 50.0, P, I, D);
 	public static Slider pSlider = new Slider(100.0, 25.0, 25.0, 25.0, false, true, 200.0, 300.0, .000001, 1.9, Main.P);
 	public static Slider iSlider = new Slider(100.0, 50.0, 25.0, 25.0, false, true, 200.0, 300.0, -1, 100, Main.I);
 	public static Slider dSlider = new Slider(100.0, 75.0, 25.0, 25.0, false, true, 200.0, 300.0, -.001, .001, Main.D);
 	public static Button reset = new Button(0.0, 0.0, 50.0, 50.0);
-	public Color squareColor = Color.red;
-	public double offset = 50;
-	public int colorCounter = 0;
+	public static Color spriteColor = Color.red;
+	public static double offset = 50;
+	public static int colorCounter = 0;
 
 	public void paintComponent(Graphics g) {
-		// update mouse states
-		if (!Main.mousePressed) {
-			Main.mouseXOrig = Main.mouseX;// MouseInfo.getPointerInfo().getLocation().x;
-			Main.mouseYOrig = Main.mouseY;// MouseInfo.getPointerInfo().getLocation().y;
-			Main.mouseJustPressed = true;
-		} else {
-			Main.mouseJustPressed = false;
-		}
 
-		// update stuff
-		offset = Main.displayW / 5.0;
-		Main.square.setMinX(0);
-		Main.square.setMinY(0);
-		Main.square.setMaxX(Main.displayW - Main.square.getW() / 2.0);
-		Main.square.setMaxY(Main.displayH - Main.square.getH() / 2.0);
-		Main.pSlider.setMinCoor((Main.displayW / 2) - offset);
-		Main.pSlider.setMaxCoor((Main.displayW / 2) + offset);
-		Main.iSlider.setMinCoor((Main.displayW / 2) - offset);
-		Main.iSlider.setMaxCoor((Main.displayW / 2) + offset);
-		Main.dSlider.setMinCoor((Main.displayW / 2) - offset);
-		Main.dSlider.setMaxCoor((Main.displayW / 2) + offset);
-		Main.mouseX = MouseInfo.getPointerInfo().getLocation().x - CURSORXOFFSET;
-		Main.mouseY = MouseInfo.getPointerInfo().getLocation().y - CURSORYOFFSET;
-		Main.pSlider.setVal(Main.P);
-		Main.iSlider.setVal(Main.I);
-		Main.dSlider.setVal(Main.D);
-		colorCounter++;
-
-		// draw objects and strings
-		if (Main.square.xcontroller.hasReached(Main.square.getX(), Main.mouseX)
-				&& Main.square.ycontroller.hasReached(Main.square.getY(), Main.mouseY)) {
-			squareColor = Color.GREEN;
-		} else {
-			squareColor = new Color(((colorCounter % 20) + 5) * 10, 0, 0);// Color.RED;
-		}
-		Main.square.oval(g, squareColor, true);
-		Main.reset.drawState(g, Color.red, new Color(150, 0, 0), true, true, "rect", Main.mouseX, Main.mouseY);
-		Main.pSlider.slide(g, Color.blue, new Color(0, 0, 130), true, true, "oval", Main.mouseX, Main.mouseY);
-		Main.iSlider.slide(g, Color.blue, new Color(0, 0, 130), true, true, "oval", Main.mouseX, Main.mouseY);
-		Main.dSlider.slide(g, Color.blue, new Color(0, 0, 130), true, true, "oval", Main.mouseX, Main.mouseY);
-
-		g.setColor(Color.white);
-		// g.drawString("x: " + Main.square.getX(), 0, 20);
-		// g.drawString("y: " + Main.square.getY(), 0, 40);
-		g.drawString("P: " + String.format("%.5f", Main.P), (Main.displayW / 2) + (int) offset + 5, 30);
-		g.drawString("I: " + String.format("%.5f", Main.I), (Main.displayW / 2) + (int) offset + 5, 55);
-		g.drawString("D: " + String.format("%.5f", Main.D), (Main.displayW / 2) + (int) offset + 5, 80);
-		g.drawString("reset", 5, 30);
-
-		// pid loop
-		if (Main.reset.isPressed(mouseX, mouseY)) {
-			Main.square.setX(mouseX);
-			Main.square.setY(mouseY);
-			Main.pSlider.setVal(1.0);
-			Main.iSlider.setVal(0.0);
-			Main.dSlider.setVal(0.0);
-		}
-		Main.P = pSlider.getVal();
-		Main.I = iSlider.getVal();
-		Main.D = dSlider.getVal();
-		Main.square.updateControllers(Main.P, Main.I, Main.D);
-		double desiredX = Main.mouseX;// 120.0;
-		double desiredY = Main.mouseY;// 120.0;
-		Main.square.setXPID(desiredX);
-		Main.square.setYPID(desiredY);
-
+		Main.updateMouse();
+		Main.updateValues();
+		Main.drawStuff(g);
+		Main.PIDLoops();
 		// delay
 		/*
 		 * try { Thread.sleep(100); } catch (InterruptedException ie) {
 		 * Thread.currentThread().interrupt(); }
 		 */
+
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		// double desiredX, desiredY;
-		// System.out.println(
-		// MouseInfo.getPointerInfo().getLocation().x + ", " +
-		// MouseInfo.getPointerInfo().getLocation().y);
 		Main.displayW = Main.panel.getWidth();
 		Main.displayH = Main.panel.getHeight();
-		Main.mousePoint = MouseInfo.getPointerInfo().getLocation();
-		// System.out.println(Main.displayW + ", " + Main.displayH);
 		repaint();
 	}
 
@@ -148,5 +88,82 @@ public class Main extends JPanel implements ActionListener {
 		Main.window.setVisible(true);
 		Main.window.setResizable(true);
 		Main.clock.start();
+	}
+
+	public static void updateMouse() {
+		if (!Main.mousePressed) {
+			Main.mouseXOrig = Main.mouseX;// MouseInfo.getPointerInfo().getLocation().x;
+			Main.mouseYOrig = Main.mouseY;// MouseInfo.getPointerInfo().getLocation().y;
+			Main.mouseJustPressed = true;
+		} else {
+			Main.mouseJustPressed = false;
+		}
+	}
+
+	public static void updateValues() {
+		Main.offset = Main.displayW / 5.0;
+		Main.sprite.setMinX(0);
+		Main.sprite.setMinY(0);
+		Main.sprite.setMaxX(Main.displayW - Main.sprite.getW() / 2.0);
+		Main.sprite.setMaxY(Main.displayH - Main.sprite.getH() / 2.0);
+		Main.pSlider.setMinCoor((Main.displayW / 2) - offset);
+		Main.pSlider.setMaxCoor((Main.displayW / 2) + offset);
+		Main.iSlider.setMinCoor((Main.displayW / 2) - offset);
+		Main.iSlider.setMaxCoor((Main.displayW / 2) + offset);
+		Main.dSlider.setMinCoor((Main.displayW / 2) - offset);
+		Main.dSlider.setMaxCoor((Main.displayW / 2) + offset);
+		Main.mouseX = MouseInfo.getPointerInfo().getLocation().x - CURSORXOFFSET;
+		Main.mouseY = MouseInfo.getPointerInfo().getLocation().y - CURSORYOFFSET;
+		Main.pSlider.setVal(Main.P);
+		Main.iSlider.setVal(Main.I);
+		Main.dSlider.setVal(Main.D);
+		Main.checker.displayH = Main.displayH;
+		Main.checker.displayW = Main.displayW;
+		Main.colorCounter++;
+	}
+
+	public static void drawStuff(Graphics g) {
+		if (Main.sprite.xcontroller.hasReached(Main.sprite.getX(), Main.mouseX)
+				&& Main.sprite.ycontroller.hasReached(Main.sprite.getY(), Main.mouseY)) {
+			Main.spriteColor = Color.GREEN;
+		} else {
+			Main.spriteColor = new Color(((Main.colorCounter % 20) + 5) * 10, 0, 0);// Color.RED;
+		}
+		Main.sprite.oval(g, spriteColor, true);
+		Main.reset.drawState(g, Color.red, new Color(150, 0, 0), true, true, "rect", Main.mouseX, Main.mouseY,
+				Main.mouseXOrig, Main.mouseYOrig, Main.mouseJustPressed, Main.mousePressed, Main.mouseOccupied);
+		Main.pSlider.slide(g, Color.blue, new Color(0, 0, 130), true, true, "oval", Main.mouseX, Main.mouseY,
+				Main.mouseXOrig, Main.mouseYOrig, Main.mouseJustPressed, Main.mousePressed, Main.mouseOccupied);
+		Main.iSlider.slide(g, Color.blue, new Color(0, 0, 130), true, true, "oval", Main.mouseX, Main.mouseY,
+				Main.mouseXOrig, Main.mouseYOrig, Main.mouseJustPressed, Main.mousePressed, Main.mouseOccupied);
+		Main.dSlider.slide(g, Color.blue, new Color(0, 0, 130), true, true, "oval", Main.mouseX, Main.mouseY,
+				Main.mouseXOrig, Main.mouseYOrig, Main.mouseJustPressed, Main.mousePressed, Main.mouseOccupied);
+
+		g.setColor(Color.white);
+		// g.drawString("x: " + Main.sprite.getX(), 0, 20);
+		// g.drawString("y: " + Main.sprite.getY(), 0, 40);
+		g.drawString("P: " + String.format("%.5f", Main.P), (Main.displayW / 2) + (int) offset + 5, 30);
+		g.drawString("I: " + String.format("%.5f", Main.I), (Main.displayW / 2) + (int) offset + 5, 55);
+		g.drawString("D: " + String.format("%.5f", Main.D), (Main.displayW / 2) + (int) offset + 5, 80);
+		g.drawString("reset", 5, 30);
+	}
+
+	public static void PIDLoops() {
+		if (Main.reset.isPressed(Main.mouseX, Main.mouseY, Main.mouseXOrig, Main.mouseYOrig, Main.mouseJustPressed,
+				Main.mousePressed, Main.mouseOccupied)) {
+			Main.sprite.setX(Main.mouseX);
+			Main.sprite.setY(Main.mouseY);
+			Main.pSlider.setVal(1.0);
+			Main.iSlider.setVal(0.0);
+			Main.dSlider.setVal(0.0);
+		}
+		Main.P = pSlider.getVal();
+		Main.I = iSlider.getVal();
+		Main.D = dSlider.getVal();
+		Main.sprite.updateControllers(Main.P, Main.I, Main.D);
+		double desiredX = Main.mouseX;// 120.0;
+		double desiredY = Main.mouseY;// 120.0;
+		Main.sprite.setXPID(desiredX);
+		Main.sprite.setYPID(desiredY);
 	}
 }

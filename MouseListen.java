@@ -1,3 +1,9 @@
+import Graphics.Drawer;
+import Graphics.PIDController;
+import Graphics.Button;
+import Graphics.Slider;
+import Graphics.Collision;
+
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
@@ -25,7 +31,7 @@ class MouseListen implements MouseListener {
     @Override
     public void mouseReleased(MouseEvent arg0) {
         Main.mousePressed = false;
-        Main.mouseOccupied = new Button(0.0, 0.0, 0.0, 0.0);
+        Main.mouseOccupied = new Button(0.0, 0.0, 0.0, 0.0, "clear");
     }
 
 }
