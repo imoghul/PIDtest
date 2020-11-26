@@ -50,6 +50,15 @@ public class Main extends JPanel implements ActionListener {
 	public int colorCounter = 0;
 
 	public void paintComponent(Graphics g) {
+		// update mouse states
+		if (!Main.mousePressed) {
+			Main.mouseXOrig = Main.mouseX;// MouseInfo.getPointerInfo().getLocation().x;
+			Main.mouseYOrig = Main.mouseY;// MouseInfo.getPointerInfo().getLocation().y;
+			Main.mouseJustPressed = true;
+		} else {
+			Main.mouseJustPressed = false;
+		}
+
 		// update stuff
 		offset = Main.displayW / 5.0;
 		Main.square.setMinX(0);
@@ -68,7 +77,7 @@ public class Main extends JPanel implements ActionListener {
 		Main.iSlider.setVal(Main.I);
 		Main.dSlider.setVal(Main.D);
 		colorCounter++;
-		System.out.println(Main.mouseJustPressed);
+
 		// draw objects and strings
 		if (Main.square.xcontroller.hasReached(Main.square.getX(), Main.mouseX)
 				&& Main.square.ycontroller.hasReached(Main.square.getY(), Main.mouseY)) {
@@ -88,6 +97,7 @@ public class Main extends JPanel implements ActionListener {
 		g.drawString("I: " + String.format("%.5f", Main.I), (Main.displayW / 2) + (int) offset + 5, 55);
 		g.drawString("D: " + String.format("%.5f", Main.D), (Main.displayW / 2) + (int) offset + 5, 80);
 		g.drawString("reset", 5, 30);
+
 		// pid loop
 		if (Main.reset.isPressed(mouseX, mouseY)) {
 			Main.square.setX(mouseX);
@@ -104,6 +114,8 @@ public class Main extends JPanel implements ActionListener {
 		double desiredY = Main.mouseY;// 120.0;
 		Main.square.setXPID(desiredX);
 		Main.square.setYPID(desiredY);
+
+		// delay
 		/*
 		 * try { Thread.sleep(100); } catch (InterruptedException ie) {
 		 * Thread.currentThread().interrupt(); }

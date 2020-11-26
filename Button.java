@@ -3,6 +3,7 @@ import java.awt.*;
 public class Button extends Drawer {
     Collision checker = new Collision();
     boolean wasIn = false;
+    boolean beganIn = false;
     private double mouseX, mouseY;
 
     public Button(double x, double y, double w, double h) {
@@ -12,11 +13,12 @@ public class Button extends Drawer {
     public boolean isPressed(double x, double y) {
         mouseX = x;
         mouseY = y;
-        boolean beganIn = (checker.autoIsIn(Main.mouseXOrig, Main.mouseYOrig, this)
-                || checker.autoIsIn(Main.mouseXOrig, Main.mouseYOrig, getMidBar()));
-        if (Main.mousePressed) {
+        if (Main.mouseJustPressed) {
+            beganIn = isIn(Main.mouseXOrig, Main.mouseYOrig) && Main.mouseJustPressed;
+        }
+        if (Main.mousePressed && beganIn) {
             if (wasIn == false) {
-                wasIn = checker.autoIsIn(x, y, this) || checker.autoIsIn(x, y, getMidBar());
+                wasIn = isIn(x, y);
             }
             if (wasIn && Main.mouseOccupied.isClear()) {
                 Main.mouseOccupied = this;
@@ -30,6 +32,10 @@ public class Button extends Drawer {
             wasIn = false;
             return false;
         }
+    }
+
+    private boolean isIn(double x, double y) {
+        return checker.autoIsIn(x, y, this) || checker.autoIsIn(x, y, getMidBar());
     }
 
     public void drawState(Graphics g, Color unpressed, Color pressed, boolean filled, boolean filledPressed,
