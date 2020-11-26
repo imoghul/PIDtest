@@ -232,6 +232,21 @@ public class Drawer {
         }
     }
 
+    public void rectCentered(Graphics g, Color c, boolean filled) {
+        type = "rectCentered";
+        x -= w / 2.0;
+        y -= h / 2.0;
+        g.setColor(c);
+        if (filled) {
+            g.fillRect((int) getX(), (int) getY(), (int) getW(), (int) getH());
+        } else {
+            g.drawRect((int) getX(), (int) getY(), (int) getW(), (int) getH());// g.drawRect(getX(), getY(), getW(),
+                                                                               // getH());
+        }
+        x += w / 2.0;
+        y += h / 2.0;
+    }
+
     public void clear(Graphics g) {
         g.setColor(Color.black);
         // g.drawRect(1, 1, 1, 1);
@@ -249,21 +264,9 @@ public class Drawer {
         }
     }
 
-    public void drawAuto(Graphics g, Color c, boolean filled) {
-        if (type.equals("rect")) {
-            rect(g, c, filled);
-        } else if (type.equals("oval")) {
-            oval(g, c, filled);
-        }
-    }
-
     public void draw(Graphics g, Color c, boolean filled, String t) {
         type = t;
-        if (type.equals("rect")) {
-            rect(g, c, filled);
-        } else if (type.equals("oval")) {
-            oval(g, c, filled);
-        }
+        draw(g, c, filled);
     }
 
     public void draw(Graphics g, Color c, boolean filled) {
@@ -271,6 +274,8 @@ public class Drawer {
             rect(g, c, filled);
         } else if (type.equals("oval")) {
             oval(g, c, filled);
+        } else if (type.equals("rectCentered")) {
+            rectCentered(g, c, filled);
         }
     }
 

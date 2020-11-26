@@ -65,12 +65,12 @@ public class Main extends JPanel implements ActionListener {
 		Main.square.setMinY(0);
 		Main.square.setMaxX(Main.displayW - Main.square.getW() / 2.0);
 		Main.square.setMaxY(Main.displayH - Main.square.getH() / 2.0);
-		Main.pSlider.setMinX((Main.displayW / 2) - offset);
-		Main.pSlider.setMaxX((Main.displayW / 2) + offset);
-		Main.iSlider.setMinX((Main.displayW / 2) - offset);
-		Main.iSlider.setMaxX((Main.displayW / 2) + offset);
-		Main.dSlider.setMinX((Main.displayW / 2) - offset);
-		Main.dSlider.setMaxX((Main.displayW / 2) + offset);
+		Main.pSlider.setMinCoor((Main.displayW / 2) - offset);
+		Main.pSlider.setMaxCoor((Main.displayW / 2) + offset);
+		Main.iSlider.setMinCoor((Main.displayW / 2) - offset);
+		Main.iSlider.setMaxCoor((Main.displayW / 2) + offset);
+		Main.dSlider.setMinCoor((Main.displayW / 2) - offset);
+		Main.dSlider.setMaxCoor((Main.displayW / 2) + offset);
 		Main.mouseX = MouseInfo.getPointerInfo().getLocation().x - CURSORXOFFSET;
 		Main.mouseY = MouseInfo.getPointerInfo().getLocation().y - CURSORYOFFSET;
 		Main.pSlider.setVal(Main.P);
@@ -87,9 +87,10 @@ public class Main extends JPanel implements ActionListener {
 		}
 		Main.square.oval(g, squareColor, true);
 		Main.reset.drawState(g, Color.red, new Color(150, 0, 0), true, true, "rect", Main.mouseX, Main.mouseY);
-		Main.pSlider.slide(g, Color.blue, new Color(0, 0, 130), false, true, "oval", Main.mouseX, Main.mouseY);
-		Main.iSlider.slide(g, Color.blue, new Color(0, 0, 130), false, true, "oval", Main.mouseX, Main.mouseY);
-		Main.dSlider.slide(g, Color.blue, new Color(0, 0, 130), false, true, "oval", Main.mouseX, Main.mouseY);
+		Main.pSlider.slide(g, Color.blue, new Color(0, 0, 130), true, true, "oval", Main.mouseX, Main.mouseY);
+		Main.iSlider.slide(g, Color.blue, new Color(0, 0, 130), true, true, "oval", Main.mouseX, Main.mouseY);
+		Main.dSlider.slide(g, Color.blue, new Color(0, 0, 130), true, true, "oval", Main.mouseX, Main.mouseY);
+
 		g.setColor(Color.white);
 		// g.drawString("x: " + Main.square.getX(), 0, 20);
 		// g.drawString("y: " + Main.square.getY(), 0, 40);
