@@ -1,4 +1,4 @@
-import Graphics.Area;
+import Graphics.Shape;
 import Graphics.PIDController;
 import Graphics.Button;
 import Graphics.Slider;

@@ -1,12 +1,14 @@
-import Graphics.Area;
+import Graphics.Shape;
 import Graphics.PIDController;
 import Graphics.Button;
 import Graphics.Slider;
 import Graphics.Collision;
 import Graphics.Mouse;
+import Graphics.Text;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.font.*;
 import java.util.Random;
 import javax.swing.*;
 import javax.swing.event.*;
@@ -31,9 +33,7 @@ public class Main extends JPanel implements ActionListener {
 	public static Timer clock = new Timer(Main.timerSpeed, panel);
 	public static Point mousePoint = MouseInfo.getPointerInfo().getLocation();
 	// Fields
-	public static int displayW = 500, displayH = 500, timerSpeed = 10, speed = 1; // full screen:
-	public static final int CURSORXOFFSET = 43;
-	public static final int CURSORYOFFSET = 46;
+	public static int displayW = 500, displayH = 500, timerSpeed = 15, speed = 1; // full screen:
 	public static final int defaultSpeed = 50;
 	// displayW=1389,displayH=855
 	// Objects
@@ -41,28 +41,30 @@ public class Main extends JPanel implements ActionListener {
 	static double P = 1.0;// .1;// 1.1;//.3;
 	static double I = 0.0;// 3;// 30;//30;
 	static double D = 0.0;// 0.00001;// -.001;//.001;
-	public static Area sprite = new Area(10.0, 10.0, 50.0, 50.0, P, I, D);
-	public static Slider pSlider = new Slider(100.0, 25.0, 25.0, 25.0, false, true, 200.0, 300.0, .000001, 1.9, Main.P);
-	public static Slider iSlider = new Slider(100.0, 50.0, 25.0, 25.0, false, true, 200.0, 300.0, -1, 100, Main.I);
-	public static Slider dSlider = new Slider(100.0, 75.0, 25.0, 25.0, false, true, 200.0, 300.0, -.001, .001, Main.D);
-	public static Button reset = new Button(0.0, 0.0, 50.0, 50.0);
+	public static Shape sprite = new Shape(10.0, 10.0, 50.0, 50.0, P, I, D, "oval", Main.timerSpeed);
+	public static Slider pSlider = new Slider(100.0, 25.0, 25.0, 25.0, false, true, 200.0, 300.0, .000001, 1.9, Main.P,
+			Main.timerSpeed);
+	public static Slider iSlider = new Slider(100.0, 50.0, 25.0, 25.0, false, true, 200.0, 300.0, 0, 100, Main.I,
+			Main.timerSpeed);
+	public static Slider dSlider = new Slider(100.0, 75.0, 25.0, 25.0, false, true, 200.0, 300.0, -.01, .01, Main.D,
+			Main.timerSpeed);
+	public static Button reset = new Button(0.0, 0.0, 50.0, 50.0, Main.timerSpeed);
 	public static Color spriteColor = Color.red;
-	public static double offset = 50;
+	public static double offset = 50.0;
 	public static int colorCounter = 0;
-	public static Mouse mouse = new Mouse();
+	public static Mouse mouse = new Mouse(Main.timerSpeed);
 
 	public void paintComponent(Graphics g) {
-
 		Main.updateMouse();
 		Main.updateValues();
 		Main.drawStuff(g);
 		Main.PIDLoops();
 		// delay
-		/*
-		 * try { Thread.sleep(100); } catch (InterruptedException ie) {
-		 * Thread.currentThread().interrupt(); }
-		 */
-
+		try {
+			Thread.sleep(Main.timerSpeed);
+		} catch (InterruptedException ie) {
+			Thread.currentThread().interrupt();
+		}
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -87,12 +89,8 @@ public class Main extends JPanel implements ActionListener {
 	}
 
 	public static void updateMouse() {
-		Main.mouse.setX(MouseInfo.getPointerInfo().getLocation().x - CURSORXOFFSET);// Main.mouseX =
-																					// MouseInfo.getPointerInfo().getLocation().x
-																					// - CURSORXOFFSET;
-		Main.mouse.setY(MouseInfo.getPointerInfo().getLocation().y - CURSORYOFFSET);// Main.mouseY =
-																					// MouseInfo.getPointerInfo().getLocation().y
-																					// - CURSORYOFFSET;
+		Main.mouse.setX(MouseInfo.getPointerInfo().getLocation().x - Main.panel.getLocationOnScreen().x);
+		Main.mouse.setY(MouseInfo.getPointerInfo().getLocation().y - Main.panel.getLocationOnScreen().y);
 		Main.mouse.update(Main.mouse.getX(), Main.mouse.getY());
 	}
 
@@ -124,16 +122,15 @@ public class Main extends JPanel implements ActionListener {
 	public static void drawStuff(Graphics g) {
 		if (Main.sprite.xcontroller.hasReached(Main.sprite.getX(), Main.mouse.getX())
 				&& Main.sprite.ycontroller.hasReached(Main.sprite.getY(), Main.mouse.getY())) {
-			Main.spriteColor = Color.GREEN;
+			Main.spriteColor = new Color(0, 255, 0);
 		} else {
-			Main.spriteColor = new Color(((Main.colorCounter % 20) + 5) * 10, 0, 0);// Color.RED;
+			Main.spriteColor = new Color(255, 0, 0, ((Main.colorCounter % 20) + 5) * 10);// Color.RED;
 		}
-		Main.sprite.oval(g, spriteColor, true);
-		Main.reset.drawState(g, Color.red, new Color(150, 0, 0), true, true, "rect", Main.mouse);
+		Main.sprite.draw(g, Main.spriteColor, true);
+		Main.reset.drawState(g, Color.red, new Color(150, 0, 0), true, true, "rect normal", Main.mouse);
 		Main.pSlider.slide(g, Color.blue, new Color(0, 0, 130), true, true, "oval", Main.mouse);
 		Main.iSlider.slide(g, Color.blue, new Color(0, 0, 130), true, true, "oval", Main.mouse);
 		Main.dSlider.slide(g, Color.blue, new Color(0, 0, 130), true, true, "oval", Main.mouse);
-
 		g.setColor(Color.white);
 		// g.drawString("x: " + Main.sprite.getX(), 0, 20);
 		// g.drawString("y: " + Main.sprite.getY(), 0, 40);
@@ -144,6 +141,7 @@ public class Main extends JPanel implements ActionListener {
 	}
 
 	public static void PIDLoops() {
+		// Button condition
 		if (Main.reset.isPressed(Main.mouse)) {
 			Main.sprite.setX(Main.mouse.getX());
 			Main.sprite.setY(Main.mouse.getY());
@@ -151,13 +149,14 @@ public class Main extends JPanel implements ActionListener {
 			Main.iSlider.setVal(0.0);
 			Main.dSlider.setVal(0.0);
 		}
+		// Update PID values
 		Main.P = pSlider.getVal();
 		Main.I = iSlider.getVal();
 		Main.D = dSlider.getVal();
+		// Update controllers
 		Main.sprite.updateControllers(Main.P, Main.I, Main.D);
-		double desiredX = Main.mouse.getX();// 120.0;
-		double desiredY = Main.mouse.getY();// 120.0;
-		Main.sprite.setXPID(desiredX);
-		Main.sprite.setYPID(desiredY);
+		// Set Values
+		Main.sprite.setXPID(Main.mouse.getX());
+		Main.sprite.setYPID(Main.mouse.getY());
 	}
 }
