@@ -10,6 +10,8 @@ import java.util.ArrayList;
 
 public class FeatureBase {
 
+    // consists of custom sliders and buttons
+
     public PSlider pSlider = new PSlider(
             new Slider(100.0, 25.0, 25.0, 25.0, false, true, 200.0, 300.0, .000001, 1.9, Main.P, Main.timerSpeed));
 
