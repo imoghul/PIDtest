@@ -42,13 +42,18 @@ public class Main extends JPanel implements ActionListener {
 	static double I = 0.0;// 3;// 30;//30;
 	static double D = 0.0;// 0.00001;// -.001;//.001;
 	public static Shape sprite = new Shape(10.0, 10.0, 50.0, 50.0, P, I, D, "oval", Main.timerSpeed);
-	public static Slider pSlider = new Slider(100.0, 25.0, 25.0, 25.0, false, true, 200.0, 300.0, .000001, 1.9, Main.P,
-			Main.timerSpeed);
-	public static Slider iSlider = new Slider(100.0, 50.0, 25.0, 25.0, false, true, 200.0, 300.0, 0, 100, Main.I,
-			Main.timerSpeed);
-	public static Slider dSlider = new Slider(100.0, 75.0, 25.0, 25.0, false, true, 200.0, 300.0, -.01, .01, Main.D,
-			Main.timerSpeed);
-	public static Button reset = new Button(0.0, 0.0, 50.0, 50.0, Main.timerSpeed);
+
+	public static PSlider pSlider = new PSlider(
+			new Slider(100.0, 25.0, 25.0, 25.0, false, true, 200.0, 300.0, .000001, 1.9, Main.P, Main.timerSpeed));
+
+	public static ISlider iSlider = new ISlider(
+			new Slider(100.0, 50.0, 25.0, 25.0, false, true, 200.0, 300.0, 0, 100, Main.I, Main.timerSpeed));
+
+	public static DSlider dSlider = new DSlider(
+			new Slider(100.0, 75.0, 25.0, 25.0, false, true, 200.0, 300.0, -.01, .01, Main.D, Main.timerSpeed));
+
+	public static ResetButton resetButton = new ResetButton(new Button(0.0, 0.0, 50.0, 50.0, Main.timerSpeed));
+
 	public static Color spriteColor = Color.red;
 	public static double offset = 50.0;
 	public static int colorCounter = 0;
@@ -100,18 +105,8 @@ public class Main extends JPanel implements ActionListener {
 		Main.sprite.setMinY(0);
 		Main.sprite.setMaxX(Main.displayW - Main.sprite.getW() / 2.0);
 		Main.sprite.setMaxY(Main.displayH - Main.sprite.getH() / 2.0);
-		// update sliders
+		// update slider centering offset
 		Main.offset = Main.displayW / 5.0;
-		Main.pSlider.setMinCoor((Main.displayW / 2) - offset);
-		Main.pSlider.setMaxCoor((Main.displayW / 2) + offset);
-		Main.iSlider.setMinCoor((Main.displayW / 2) - offset);
-		Main.iSlider.setMaxCoor((Main.displayW / 2) + offset);
-		Main.dSlider.setMinCoor((Main.displayW / 2) - offset);
-		Main.dSlider.setMaxCoor((Main.displayW / 2) + offset);
-		// make sure sliders maintain positions
-		Main.pSlider.setVal(Main.P);
-		Main.iSlider.setVal(Main.I);
-		Main.dSlider.setVal(Main.D);
 		// update checker's values
 		Main.checker.displayH = Main.displayH;
 		Main.checker.displayW = Main.displayW;
@@ -127,10 +122,12 @@ public class Main extends JPanel implements ActionListener {
 			Main.spriteColor = new Color(255, 0, 0, ((Main.colorCounter % 20) + 5) * 10);// Color.RED;
 		}
 		Main.sprite.draw(g, Main.spriteColor, true);
-		Main.reset.drawState(g, Color.red, new Color(150, 0, 0), true, true, "rect normal", Main.mouse);
-		Main.pSlider.slide(g, Color.blue, new Color(0, 0, 130), true, true, "oval", Main.mouse);
-		Main.iSlider.slide(g, Color.blue, new Color(0, 0, 130), true, true, "oval", Main.mouse);
-		Main.dSlider.slide(g, Color.blue, new Color(0, 0, 130), true, true, "oval", Main.mouse);
+
+		Main.resetButton.run(g, Color.red, new Color(150, 0, 0), true, true, "rect normal", Main.mouse);
+		Main.pSlider.run(g, Color.blue, new Color(0, 0, 130), true, true, "oval", Main.mouse);
+		Main.iSlider.run(g, Color.blue, new Color(0, 0, 130), true, true, "oval", Main.mouse);
+		Main.dSlider.run(g, Color.blue, new Color(0, 0, 130), true, true, "oval", Main.mouse);
+
 		g.setColor(Color.white);
 		// g.drawString("x: " + Main.sprite.getX(), 0, 20);
 		// g.drawString("y: " + Main.sprite.getY(), 0, 40);
@@ -141,18 +138,6 @@ public class Main extends JPanel implements ActionListener {
 	}
 
 	public static void PIDLoops() {
-		// Button condition
-		if (Main.reset.isPressed(Main.mouse)) {
-			Main.sprite.setX(Main.mouse.getX());
-			Main.sprite.setY(Main.mouse.getY());
-			Main.pSlider.setVal(1.0);
-			Main.iSlider.setVal(0.0);
-			Main.dSlider.setVal(0.0);
-		}
-		// Update PID values
-		Main.P = pSlider.getVal();
-		Main.I = iSlider.getVal();
-		Main.D = dSlider.getVal();
 		// Update controllers
 		Main.sprite.updateControllers(Main.P, Main.I, Main.D);
 		// Set Values
