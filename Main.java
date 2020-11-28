@@ -43,17 +43,7 @@ public class Main extends JPanel implements ActionListener {
 	static double D = 0.0;// 0.00001;// -.001;//.001;
 	public static Shape sprite = new Shape(10.0, 10.0, 50.0, 50.0, P, I, D, "oval", Main.timerSpeed);
 
-	public static PSlider pSlider = new PSlider(
-			new Slider(100.0, 25.0, 25.0, 25.0, false, true, 200.0, 300.0, .000001, 1.9, Main.P, Main.timerSpeed));
-
-	public static ISlider iSlider = new ISlider(
-			new Slider(100.0, 50.0, 25.0, 25.0, false, true, 200.0, 300.0, 0, 100, Main.I, Main.timerSpeed));
-
-	public static DSlider dSlider = new DSlider(
-			new Slider(100.0, 75.0, 25.0, 25.0, false, true, 200.0, 300.0, -.01, .01, Main.D, Main.timerSpeed));
-
-	public static ResetButton resetButton = new ResetButton(new Button(0.0, 0.0, 50.0, 50.0, Main.timerSpeed));
-
+	public static FeatureBase f = new FeatureBase();
 	public static Color spriteColor = Color.red;
 	public static double offset = 50.0;
 	public static int colorCounter = 0;
@@ -110,11 +100,12 @@ public class Main extends JPanel implements ActionListener {
 		// update checker's values
 		Main.checker.displayH = Main.displayH;
 		Main.checker.displayW = Main.displayW;
-
+		// increment color
 		Main.colorCounter++;
 	}
 
 	public static void drawStuff(Graphics g) {
+		// draw the sprite
 		if (Main.sprite.xcontroller.hasReached(Main.sprite.getX(), Main.mouse.getX())
 				&& Main.sprite.ycontroller.hasReached(Main.sprite.getY(), Main.mouse.getY())) {
 			Main.spriteColor = new Color(0, 255, 0);
@@ -122,12 +113,9 @@ public class Main extends JPanel implements ActionListener {
 			Main.spriteColor = new Color(255, 0, 0, ((Main.colorCounter % 20) + 5) * 10);// Color.RED;
 		}
 		Main.sprite.draw(g, Main.spriteColor, true);
-
-		Main.resetButton.run(g, Color.red, new Color(150, 0, 0), true, true, "rect normal", Main.mouse);
-		Main.pSlider.run(g, Color.blue, new Color(0, 0, 130), true, true, "oval", Main.mouse);
-		Main.iSlider.run(g, Color.blue, new Color(0, 0, 130), true, true, "oval", Main.mouse);
-		Main.dSlider.run(g, Color.blue, new Color(0, 0, 130), true, true, "oval", Main.mouse);
-
+		// run all features
+		f.run(g, Main.mouse);
+		// draw all the text
 		g.setColor(Color.white);
 		// g.drawString("x: " + Main.sprite.getX(), 0, 20);
 		// g.drawString("y: " + Main.sprite.getY(), 0, 40);
