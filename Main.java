@@ -1,11 +1,5 @@
-import Graphics.Shape;
-import Graphics.PIDController;
-import Graphics.Button;
-import Graphics.Slider;
-import Graphics.Collision;
-import Graphics.Mouse;
-import Graphics.Text;
 
+import Graphics.Mouse;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.font.*;
@@ -37,11 +31,9 @@ public class Main extends JPanel implements ActionListener {
 	public static final int defaultSpeed = 50;
 	// displayW=1389,displayH=855
 	// Objects
-	public static Collision checker = new Collision();
 	static double P = 1.0;// .1;// 1.1;//.3;
 	static double I = 0.0;// 3;// 30;//30;
 	static double D = 0.0;// 0.00001;// -.001;//.001;
-	public static Shape sprite = new Shape(10.0, 10.0, 50.0, 50.0, P, I, D, "oval", Main.timerSpeed);
 
 	public static FeatureBase f = new FeatureBase();
 	public static Color spriteColor = Color.red;
@@ -53,7 +45,6 @@ public class Main extends JPanel implements ActionListener {
 		Main.updateMouse();
 		Main.updateValues();
 		Main.drawStuff(g);
-		Main.PIDLoops();
 		// delay
 		try {
 			Thread.sleep(Main.timerSpeed);
@@ -90,29 +81,13 @@ public class Main extends JPanel implements ActionListener {
 	}
 
 	public static void updateValues() {
-		// update bounds
-		Main.sprite.setMinX(0);
-		Main.sprite.setMinY(0);
-		Main.sprite.setMaxX(Main.displayW - Main.sprite.getW() / 2.0);
-		Main.sprite.setMaxY(Main.displayH - Main.sprite.getH() / 2.0);
 		// update slider centering offset
 		Main.offset = Main.displayW / 5.0;
-		// update checker's values
-		Main.checker.displayH = Main.displayH;
-		Main.checker.displayW = Main.displayW;
 		// increment color
 		Main.colorCounter++;
 	}
 
 	public static void drawStuff(Graphics g) {
-		// draw the sprite
-		if (Main.sprite.xcontroller.hasReached(Main.sprite.getX(), Main.mouse.getX())
-				&& Main.sprite.ycontroller.hasReached(Main.sprite.getY(), Main.mouse.getY())) {
-			Main.spriteColor = new Color(0, 255, 0);
-		} else {
-			Main.spriteColor = new Color(255, 0, 0, ((Main.colorCounter % 20) + 5) * 10);// Color.RED;
-		}
-		Main.sprite.draw(g, Main.spriteColor, true);
 		// run all features
 		f.run(g, Main.mouse);
 		// draw all the text
@@ -124,11 +99,4 @@ public class Main extends JPanel implements ActionListener {
 		g.drawString("D: " + String.format("%.5f", Main.D), (Main.displayW / 2) + (int) offset + 5, 80);
 	}
 
-	public static void PIDLoops() {
-		// Update controllers
-		Main.sprite.updateControllers(Main.P, Main.I, Main.D);
-		// Set Values
-		Main.sprite.setXPID(Main.mouse.getX());
-		Main.sprite.setYPID(Main.mouse.getY());
-	}
 }
