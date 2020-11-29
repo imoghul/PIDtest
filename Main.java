@@ -39,6 +39,7 @@ public class Main extends JPanel implements ActionListener {
 	// Objects
 	public static BeginningBase b = new BeginningBase();
 	public static DemoBase d = new DemoBase();
+	public static PauseBase p = new PauseBase();
 	public static Mouse mouse = new Mouse(Main.timerSpeed);
 
 	public void paintComponent(Graphics g) {
@@ -52,6 +53,7 @@ public class Main extends JPanel implements ActionListener {
 			Main.d.run(g, Main.mouse);
 			break;
 		case PAUSED:
+			Main.p.run(g, Main.mouse);
 			break;
 		}
 		// delay

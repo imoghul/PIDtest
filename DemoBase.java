@@ -1,5 +1,7 @@
 import java.awt.Graphics;
 import java.awt.Color;
+import java.awt.Font;
+
 import Graphics.Slider;
 import Graphics.Button;
 import Graphics.Shape;
@@ -25,6 +27,7 @@ public class DemoBase {
                         Main.D, Main.timerSpeed));
 
         public ResetButton resetButton = new ResetButton(new Button(0.0, 0.0, 50.0, 50.0, Main.timerSpeed));
+        public PauseButton pauseButton = new PauseButton(new Button(0.0, 0.0, 50.0, 50.0, Main.timerSpeed));
 
         public void run(Graphics g, Mouse m) {
                 ///////////// update bounds
@@ -45,6 +48,7 @@ public class DemoBase {
                 sprite.setXPID(Main.mouse.getX());
                 sprite.setYPID(Main.mouse.getY());
                 /////////// run sliders and buttons
+                pauseButton.run(g, Color.blue, new Color(150, 0, 0, 150), true, true, "rect normal", m);
                 resetButton.run(g, Color.red, new Color(150, 0, 0, 150), true, true, "rect normal", m);
                 pSlider.run(g, Color.blue, new Color(0, 0, 150, 150), true, true, "oval", m);
                 iSlider.run(g, Color.blue, new Color(0, 0, 150, 150), true, true, "oval", m);
@@ -55,6 +59,7 @@ public class DemoBase {
                 g.setColor(Color.white);
                 // g.drawString("x: " + Main.sprite.getX(), 0, 20);
                 // g.drawString("y: " + Main.sprite.getY(), 0, 40);
+                g.setFont(new Font("Arial", Font.PLAIN, 12));
                 g.drawString("P: " + String.format("%.5f", Main.P),
                                 (int) ((Main.displayW / 2) + (int) Main.displayW / 5.0 + 5), 30);
                 g.drawString("I: " + String.format("%.5f", Main.I),

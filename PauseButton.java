@@ -3,21 +3,23 @@ import Graphics.Text;
 import java.awt.Color;
 import java.awt.Font;
 
-public class ResetButton extends Button {
+public class PauseButton extends Button {
 
-    public ResetButton(Button b) {
+    public PauseButton(Button b) {
         super(b);// super(b.getX(), b.getY(), b.getW(), b.getH(), b.getTypeFull(), b.delay);
-        this.setLabel("Reset");
+        this.setLabel("Pause");
         this.getLabel().setColor(Color.white);
         this.getLabel().setFont(new Font("Arial", Font.BOLD, 12));
     }
 
     @Override
     public void doAction() {
-        Main.d.sprite.setX(Main.mouse.getX());
-        Main.d.sprite.setY(Main.mouse.getY());
-        Main.d.pSlider.setVal(1.0);
-        Main.d.iSlider.setVal(0.0);
-        Main.d.dSlider.setVal(0.0);
+        Main.currentState = Main.State.PAUSED;
+    }
+
+    @Override
+    public void update() {
+        setX(Main.displayW - getW());
+        setY(Main.displayH - getH());
     }
 }

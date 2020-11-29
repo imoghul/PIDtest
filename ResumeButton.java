@@ -3,11 +3,11 @@ import Graphics.Text;
 import java.awt.Color;
 import java.awt.Font;
 
-public class BeginningButton extends Button {
+public class ResumeButton extends Button {
 
-    public BeginningButton(Button b) {
+    public ResumeButton(Button b) {
         super(b);// super(b.getX(), b.getY(), b.getW(), b.getH(), b.getTypeFull(), b.delay);
-        this.setLabel("Begin");
+        this.setLabel("Resume");
         this.getLabel().setColor(Color.white);
         this.getLabel().setFont(new Font("Arial", Font.BOLD, 36));
     }
