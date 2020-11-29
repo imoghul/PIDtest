@@ -5,6 +5,7 @@ public class PSlider extends Slider {
         super(s);
     }
 
+    @Override
     public void doAction() {
         Main.P = getVal();
         setMinCoor((Main.displayW / 2) - Main.offset);

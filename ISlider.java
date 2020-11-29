@@ -5,6 +5,7 @@ public class ISlider extends Slider {
         super(s);
     }
 
+    @Override
     public void doAction() {
         Main.I = getVal();
         setMinCoor((Main.displayW / 2) - Main.offset);

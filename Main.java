@@ -122,7 +122,6 @@ public class Main extends JPanel implements ActionListener {
 		g.drawString("P: " + String.format("%.5f", Main.P), (Main.displayW / 2) + (int) offset + 5, 30);
 		g.drawString("I: " + String.format("%.5f", Main.I), (Main.displayW / 2) + (int) offset + 5, 55);
 		g.drawString("D: " + String.format("%.5f", Main.D), (Main.displayW / 2) + (int) offset + 5, 80);
-		g.drawString("reset", 5, 30);
 	}
 
 	public static void PIDLoops() {
