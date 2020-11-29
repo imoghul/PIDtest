@@ -17,6 +17,10 @@ import java.util.Arrays;
 
 //extends JPanel implements ActionListener
 public class Main extends JPanel implements ActionListener {
+	enum State {
+		BEGINNING, RUNNING, PAUSED
+	}
+
 	// Graphical constants
 	static final long serialVersionUID = 536871008;
 	public static JFrame window = new JFrame("PID Test");
@@ -28,23 +32,28 @@ public class Main extends JPanel implements ActionListener {
 	public static Point mousePoint = MouseInfo.getPointerInfo().getLocation();
 	// Fields
 	public static int displayW = 500, displayH = 500, timerSpeed = 15, speed = 1; // full screen:
-	public static final int defaultSpeed = 50;
-	// displayW=1389,displayH=855
+	public static double P = 1.0;// .1;// 1.1;//.3;
+	public static double I = 0.0;// 3;// 30;//30;
+	public static double D = 0.0;// 0.00001;// -.001;//.001;
+	public static State currentState = State.BEGINNING;
 	// Objects
-	static double P = 1.0;// .1;// 1.1;//.3;
-	static double I = 0.0;// 3;// 30;//30;
-	static double D = 0.0;// 0.00001;// -.001;//.001;
-
-	public static FeatureBase f = new FeatureBase();
-	public static Color spriteColor = Color.red;
-	public static double offset = 50.0;
-	public static int colorCounter = 0;
+	public static BeginningBase b = new BeginningBase();
+	public static DemoBase d = new DemoBase();
 	public static Mouse mouse = new Mouse(Main.timerSpeed);
 
 	public void paintComponent(Graphics g) {
 		Main.updateMouse();
-		Main.updateValues();
-		Main.drawStuff(g);
+
+		switch (Main.currentState) {
+		case BEGINNING:
+			Main.b.run(g, Main.mouse);
+			break;
+		case RUNNING:
+			Main.d.run(g, Main.mouse);
+			break;
+		case PAUSED:
+			break;
+		}
 		// delay
 		try {
 			Thread.sleep(Main.timerSpeed);
@@ -78,25 +87,6 @@ public class Main extends JPanel implements ActionListener {
 		Main.mouse.setX(MouseInfo.getPointerInfo().getLocation().x - Main.panel.getLocationOnScreen().x);
 		Main.mouse.setY(MouseInfo.getPointerInfo().getLocation().y - Main.panel.getLocationOnScreen().y);
 		Main.mouse.update(Main.mouse.getX(), Main.mouse.getY());
-	}
-
-	public static void updateValues() {
-		// update slider centering offset
-		Main.offset = Main.displayW / 5.0;
-		// increment color
-		Main.colorCounter++;
-	}
-
-	public static void drawStuff(Graphics g) {
-		// run all features
-		f.run(g, Main.mouse);
-		// draw all the text
-		g.setColor(Color.white);
-		// g.drawString("x: " + Main.sprite.getX(), 0, 20);
-		// g.drawString("y: " + Main.sprite.getY(), 0, 40);
-		g.drawString("P: " + String.format("%.5f", Main.P), (Main.displayW / 2) + (int) offset + 5, 30);
-		g.drawString("I: " + String.format("%.5f", Main.I), (Main.displayW / 2) + (int) offset + 5, 55);
-		g.drawString("D: " + String.format("%.5f", Main.D), (Main.displayW / 2) + (int) offset + 5, 80);
 	}
 
 }

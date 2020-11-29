@@ -12,10 +12,10 @@ public class ResetButton extends Button {
 
     @Override
     public void doAction() {
-        Main.f.sprite.setX(Main.mouse.getX());
-        Main.f.sprite.setY(Main.mouse.getY());
-        Main.f.pSlider.setVal(1.0);
-        Main.f.iSlider.setVal(0.0);
-        Main.f.dSlider.setVal(0.0);
+        Main.d.sprite.setX(Main.mouse.getX());
+        Main.d.sprite.setY(Main.mouse.getY());
+        Main.d.pSlider.setVal(1.0);
+        Main.d.iSlider.setVal(0.0);
+        Main.d.dSlider.setVal(0.0);
     }
 }

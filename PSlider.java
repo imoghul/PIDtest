@@ -8,7 +8,13 @@ public class PSlider extends Slider {
     @Override
     public void doAction() {
         Main.P = getVal();
-        setMinCoor((Main.displayW / 2) - Main.offset);
-        setMaxCoor((Main.displayW / 2) + Main.offset);
+        setMinCoor((Main.displayW / 2) - Main.displayW / 5.0);
+        setMaxCoor((Main.displayW / 2) + Main.displayW / 5.0);
+    }
+
+    @Override
+    public void update() {
+        setMinCoor((Main.displayW / 2) - Main.displayW / 5.0);
+        setMaxCoor((Main.displayW / 2) + Main.displayW / 5.0);
     }
 }
