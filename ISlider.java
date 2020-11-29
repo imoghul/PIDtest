@@ -1,7 +1,7 @@
 import Graphics.Slider;
 import Graphics.SliderImplementation;
 
-public class ISlider extends Slider implements SliderImplementation {
+public class ISlider extends SliderImplementation {
     public ISlider(Slider s) {
         super(s);
     }

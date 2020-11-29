@@ -7,6 +7,8 @@ import Graphics.Button;
 import Graphics.Shape;
 import Graphics.Text;
 import Graphics.Mouse;
+import Graphics.ButtonImplementation;
+import Graphics.SliderImplementation;
 
 import java.util.ArrayList;
 

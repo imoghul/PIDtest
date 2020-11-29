@@ -1,7 +1,7 @@
 import Graphics.Slider;
 import Graphics.SliderImplementation;
 
-public class PSlider extends Slider implements SliderImplementation {
+public class PSlider extends SliderImplementation {
     public PSlider(Slider s) {
         super(s);
     }

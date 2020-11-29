@@ -4,7 +4,7 @@ import Graphics.ButtonImplementation;
 import java.awt.Color;
 import java.awt.Font;
 
-public class ResumeButton extends Button implements ButtonImplementation {
+public class ResumeButton extends ButtonImplementation {
 
     public ResumeButton(Button b) {
         super(b);// super(b.getX(), b.getY(), b.getW(), b.getH(), b.getTypeFull(), b.delay);
