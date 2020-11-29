@@ -1,9 +1,10 @@
-import Graphics.Button;
 import Graphics.Text;
+import Graphics.ButtonImplementation;
+import Graphics.Button;
 import java.awt.Color;
 import java.awt.Font;
 
-public class BeginningButton extends Button {
+public class BeginningButton extends Button implements ButtonImplementation {
 
     public BeginningButton(Button b) {
         super(b);// super(b.getX(), b.getY(), b.getW(), b.getH(), b.getTypeFull(), b.delay);

@@ -1,6 +1,7 @@
 import Graphics.Slider;
+import Graphics.SliderImplementation;
 
-public class ISlider extends Slider {
+public class ISlider extends Slider implements SliderImplementation {
     public ISlider(Slider s) {
         super(s);
     }
@@ -8,8 +9,6 @@ public class ISlider extends Slider {
     @Override
     public void doAction() {
         Main.I = getVal();
-        setMinCoor((Main.displayW / 2) - Main.displayW / 5.0);
-        setMaxCoor((Main.displayW / 2) + Main.displayW / 5.0);
     }
 
     @Override
