@@ -5,8 +5,7 @@ import Graphics.Button;
 import Graphics.Shape;
 import Graphics.Text;
 import Graphics.Mouse;
-
-import java.util.ArrayList;
+import java.awt.MouseInfo;
 
 public class PauseBase {
 

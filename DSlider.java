@@ -13,7 +13,6 @@ public class DSlider extends SliderImplementation {
 
     @Override
     public void update() {
-        setMinCoor((Main.displayW / 2) - Main.displayW / 5.0);
-        setMaxCoor((Main.displayW / 2) + Main.displayW / 5.0);
+        center(Main.displayW, Main.displayH, .2);
     }
 }

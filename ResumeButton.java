@@ -20,9 +20,8 @@ public class ResumeButton extends ButtonImplementation {
 
     @Override
     public void update() {
-        setX(Main.displayW / 2);
-        setY(Main.displayH / 2);
-        setW(Main.displayW * .3);
-        setH(Main.displayH * .3);
+        center(Main.displayW, Main.displayH);
+        setW(Main.displayW * .2);
+        setH(Main.displayH * .2);
     }
 }
