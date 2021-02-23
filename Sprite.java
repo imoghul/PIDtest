@@ -15,8 +15,8 @@ public class Sprite extends ShapeImplementation {
     public void update(Mouse m) {
         setMinX(0);
         setMinY(0);
-        setMaxX(Main.displayW - getW() / 2.0);
-        setMaxY(Main.displayH - getH() / 2.0);
+        setMaxX(Values.displayW - getW() / 2.0);
+        setMaxY(Values.displayH - getH() / 2.0);
         colorCounter++;
 
         if (xcontroller.hasReached(getX(), m.getX()) && ycontroller.hasReached(getY(), m.getY())) {

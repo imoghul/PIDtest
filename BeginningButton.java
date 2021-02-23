@@ -15,13 +15,13 @@ public class BeginningButton extends ButtonImplementation {
 
     @Override
     public void doAction() {
-        Main.currentState = Main.State.RUNNING;
+        Values.currentState = Values.State.RUNNING;
     }
 
     @Override
     public void update() {
-        center(Main.displayW, Main.displayH);
-        setW(Main.displayW * .2);
-        setH(Main.displayH * .2);
+        center(Values.displayW, Values.displayH);
+        setW(Values.displayW * .2);
+        setH(Values.displayH * .2);
     }
 }

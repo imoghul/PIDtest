@@ -8,11 +8,11 @@ public class PSlider extends SliderImplementation {
 
     @Override
     public void doAction() {
-        Main.P = getVal();
+        Values.P = getVal();
     }
 
     @Override
     public void update() {
-        center(Main.displayW, Main.displayH, .2);
+        center(Values.displayW, Values.displayH, .2);
     }
 }

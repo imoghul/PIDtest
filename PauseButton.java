@@ -15,12 +15,12 @@ public class PauseButton extends ButtonImplementation {
 
     @Override
     public void doAction() {
-        Main.currentState = Main.State.PAUSED;
+        Values.currentState = Values.State.PAUSED;
     }
 
     @Override
     public void update() {
-        setX(Main.displayW - getW());
-        setY(Main.displayH - getH());
+        setX(Values.displayW - getW());
+        setY(Values.displayH - getH());
     }
 }

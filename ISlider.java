@@ -8,11 +8,11 @@ public class ISlider extends SliderImplementation {
 
     @Override
     public void doAction() {
-        Main.I = getVal();
+        Values.I = getVal();
     }
 
     @Override
     public void update() {
-        center(Main.displayW, Main.displayH, .2);
+        center(Values.displayW, Values.displayH, .2);
     }
 }
